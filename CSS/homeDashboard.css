@@ -42,19 +42,22 @@ body {
   color: var(--foreground);
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  padding-bottom: 32px;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
 }
 
-.export-wrapper {
-  width: 375px;
-  min-height: 812px;
+.page-container {
+  width: 100%;
+  max-width: 375px;
+  min-height: 100vh;
   position: relative;
   font-family: var(--font-family-body);
   background-color: var(--background);
+  margin: 0 auto;
 }
 
-.header {
+.page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -62,14 +65,14 @@ body {
   background: var(--primary-foreground);
 }
 
-.header-title {
+.page-title {
   font-size: 18px;
   font-weight: 700;
   color: var(--foreground);
 }
 
-.menu-btn,
-.profile-btn {
+.menu-button,
+.user-profile {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,19 +81,24 @@ body {
   cursor: pointer;
 }
 
-.menu-btn iconify-icon {
+.user-profile iconify-icon {
+  font-size: 35px;
+  color: var(--foreground);
+}
+
+.menu-button iconify-icon {
   font-size: 24px;
   color: var(--foreground);
 }
 
-.avatar {
+.user-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.content {
+.main-content {
   padding: 0 24px;
   display: flex;
   flex-direction: column;
@@ -108,7 +116,7 @@ body {
 }
 
 /* Main Summary Card */
-.summary-card {
+.budget-summary {
   background-color: var(--primary);
   color: var(--primary-foreground);
   padding: 24px;
@@ -119,48 +127,48 @@ body {
   box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.4);
 }
 
-.main-balance-label {
+.balance-label {
   font-size: 14px;
   opacity: 0.9;
   margin-bottom: 4px;
 }
 
-.main-balance-amount {
+.balance-amount {
   font-size: 32px;
   font-weight: 800;
 }
 
-.summary-stats {
+.stats-row {
   display: flex;
   justify-content: space-between;
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.stat-item {
+.stat-group {
   display: flex;
   flex-direction: column;
 }
 
-.stat-label {
+.stat-title {
   font-size: 12px;
   opacity: 0.9;
   margin-bottom: 4px;
 }
 
-.stat-value {
+.stat-number {
   font-size: 18px;
   font-weight: 700;
 }
 
 /* Weekly/Monthly Row */
-.period-row {
+.time-periods {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.period-card {
+.time-card {
   background: var(--card);
   padding: 20px;
   border-radius: var(--radius-lg);
@@ -169,24 +177,24 @@ body {
   gap: 8px;
 }
 
-.period-label {
+.time-label {
   font-size: 12px;
   color: var(--muted-foreground);
 }
 
-.period-amount {
+.time-amount {
   font-size: 20px;
   font-weight: 800;
   color: var(--foreground);
 }
 
-.period-desc {
+.time-description {
   font-size: 11px;
   color: var(--muted-foreground);
 }
 
 /* Alert Card */
-.alert-card {
+.warning-box {
   background: var(--warning);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -195,29 +203,29 @@ body {
   align-items: flex-start;
 }
 
-.alert-icon {
+.warning-icon {
   color: #eab308;
   flex-shrink: 0;
   margin-top: 2px;
 }
 
-.alert-icon iconify-icon {
+.warning-icon iconify-icon {
   font-size: 32px;
 }
 
-.alert-content {
+.warning-text {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.alert-title {
+.warning-title {
   font-size: 15px;
   font-weight: 700;
   color: var(--warning-foreground);
 }
 
-.alert-text {
+.warning-message {
   font-size: 13px;
   line-height: 1.4;
   color: var(--warning-foreground);
@@ -225,32 +233,32 @@ body {
 }
 
 /* Goal Section */
-.goal-section {
+.savings-goal {
   background: var(--card);
   padding: 20px;
   border-radius: var(--radius-lg);
 }
 
-.goal-header {
+.goal-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.goal-title {
+.goal-name {
   font-size: 16px;
   font-weight: 700;
 }
 
-.view-all {
+.view-all-link {
   font-size: 13px;
   color: #3b82f6;
   font-weight: 600;
   text-decoration: none;
 }
 
-.goal-info {
+.goal-details {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
@@ -258,19 +266,19 @@ body {
   margin-bottom: 8px;
 }
 
-.goal-percent {
+.progress-percent {
   color: var(--foreground);
   font-weight: 600;
 }
 
-.progress-track {
+.progress-bar {
   height: 8px;
   background: var(--muted);
   border-radius: 4px;
   overflow: hidden;
 }
 
-.progress-fill {
+.progress-bar-fill {
   height: 100%;
   background: var(--primary);
   width: 60%;
@@ -278,13 +286,13 @@ body {
 }
 
 /* Actions Row */
-.actions-row {
+.quick-actions {
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr;
   gap: 16px;
 }
 
-.action-btn {
+.action-button {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -296,46 +304,47 @@ body {
   text-align: center;
 }
 
-.action-btn.primary {
+.action-button.primary {
   background: var(--primary);
   color: var(--primary-foreground);
   box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
-.action-btn.primary iconify-icon {
+.action-button.primary iconify-icon {
   font-size: 24px;
 }
 
-.action-btn.secondary {
+.action-button.secondary {
   background: var(--card);
   color: var(--foreground);
 }
 
-.action-btn.secondary iconify-icon {
+.action-button.secondary iconify-icon {
   font-size: 24px;
 }
 
-.action-btn.secondary iconify-icon.budget-icon {
+.action-button.secondary iconify-icon.budget-icon {
   color: #d97706;
 }
 
-.action-btn.secondary iconify-icon.goal-icon {
+.action-button.secondary iconify-icon.goal-icon {
   color: #ef4444;
 }
 
-.action-label {
+.button-label {
   font-size: 13px;
   font-weight: 600;
 }
 
 /* Footer Links */
-.footer-links {
+.bottom-buttons {
+  padding-bottom: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.footer-btn {
+.action-card {
   background: var(--card);
   padding: 16px;
   border-radius: var(--radius-lg);
@@ -348,12 +357,12 @@ body {
   font-size: 14px;
 }
 
-.footer-btn iconify-icon.reports-icon {
+.action-card iconify-icon.reports-icon {
   font-size: 20px;
   color: #3b82f6;
 }
 
-.footer-btn iconify-icon.compare-icon {
+.action-card iconify-icon.compare-icon {
   font-size: 20px;
   color: #64748b;
 }

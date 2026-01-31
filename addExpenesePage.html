@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Expense</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    
+    <link rel="stylesheet" href="CSS/addExpenesePage.css" />
+    
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+  </head>
+  <body>
+    <div class="page-container">
+      <header class="header">
+        <button class="back-button">
+          <iconify-icon icon="lucide:arrow-left"></iconify-icon>
+        </button>
+        <h1 class="page-title">Add Expense</h1>
+        <img src="IMG/user.png" alt="User" class="user-avatar" />
+      </header>
+
+      <main class="main-content">
+        <!-- Amount -->
+        <div class="amount-display">
+          <label class="field-label">AMOUNT</label>
+          <div class="amount-wrapper">
+            <span class="amount-text">₱0.00</span>
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="input-field">
+          <label class="field-label normal">Date</label>
+          <div class="input-container">
+            <iconify-icon icon="lucide:calendar"></iconify-icon>
+            <span class="input-value">10/27/2023</span>
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="input-field">
+          <label class="field-label normal">Category</label>
+          <div class="input-container">
+            <iconify-icon icon="lucide:tag"></iconify-icon>
+            <span class="input-value">Food &amp; Dining</span>
+            <iconify-icon icon="lucide:chevron-down"></iconify-icon>
+          </div>
+        </div>
+
+        <!-- Suggestions -->
+        <div class="suggestions">
+          <span class="suggestion-text">Did you mean:</span>
+          <button class="suggestion-chip">
+            <iconify-icon icon="lucide:shopping-cart"></iconify-icon>
+            Groceries
+          </button>
+          <button class="suggestion-chip">
+            <iconify-icon icon="lucide:utensils"></iconify-icon>
+            Eating Out
+          </button>
+        </div>
+
+        <!-- Description -->
+        <div class="input-field">
+          <label class="field-label normal">Description</label>
+          <div class="input-container large">
+            <span class="input-value">Lunch at Joe's</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Essential Toggle -->
+        <div class="input-field">
+          <label class="field-label normal">Is this essential?</label>
+          <div class="toggle-buttons">
+            <div class="toggle-option active">Yes</div>
+            <div class="toggle-option">No</div>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <button class="save-button">
+          <iconify-icon icon="lucide:save"></iconify-icon>
+          Save Expense
+        </button>
+      </main>
+    </div>
+  </body>
+</html>

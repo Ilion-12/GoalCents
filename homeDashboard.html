@@ -17,106 +17,104 @@
     <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
   </head>
   <body>
-    <div class="export-wrapper">
-      <header class="header">
-        <button class="menu-btn" data-media-type="button">
+    <div class="page-container">
+      <header class="page-header">
+        <button class="menu-button">
           <iconify-icon icon="lucide:menu"></iconify-icon>
         </button>
-        <h1 class="header-title">Home</h1>
-        <div class="profile-btn" data-media-type="button">
-          <img src="IMG/user.png" alt="User" class="avatar" />
+        <h1 class="page-title">Home</h1>
+        <div class="user-profile">
+          <iconify-icon icon="mdi:account"></iconify-icon>
         </div>
       </header>
 
-      <main class="content">
+      <main class="main-content">
         <h2 class="greeting">Hello, Troy! 👋</h2>
 
         <!-- Main Budget Card -->
-        <div class="summary-card">
-          <div class="main-balance">
-            <div class="main-balance-label">Total Budget</div>
-            <div class="main-balance-amount">₱25,000</div>
+        <div class="budget-summary">
+          <div class="total-balance">
+            <div class="balance-label">Total Budget</div>
+            <div class="balance-amount">₱25,000</div>
           </div>
 
-          <div class="summary-stats">
-            <div class="stat-item">
-              <span class="stat-label">Total Spent</span>
-              <span class="stat-value">₱18,450</span>
+          <div class="stats-row">
+            <div class="stat-group">
+              <span class="stat-title">Total Spent</span>
+              <span class="stat-number">₱18,450</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">Total Saved</span>
-              <span class="stat-value">₱6,550</span>
+            <div class="stat-group">
+              <span class="stat-title">Total Saved</span>
+              <span class="stat-number">₱6,550</span>
             </div>
           </div>
         </div>
 
         <!-- Period Stats -->
-        <div class="period-row">
-          <div class="period-card">
-            <span class="period-label">Weekly</span>
-            <span class="period-amount">₱4,250</span>
-            <span class="period-desc">Spent this week</span>
+        <div class="time-periods">
+          <div class="time-card">
+            <span class="time-label">Weekly</span>
+            <span class="time-amount">₱4,250</span>
+            <span class="time-description">Spent this week</span>
           </div>
-          <div class="period-card">
-            <span class="period-label">Monthly</span>
-            <span class="period-amount">₱18,450</span>
-            <span class="period-desc">Spent this month</span>
+          <div class="time-card">
+            <span class="time-label">Monthly</span>
+            <span class="time-amount">₱18,450</span>
+            <span class="time-description">Spent this month</span>
           </div>
         </div>
 
         <!-- Alert -->
-        <div class="alert-card">
-          <div class="alert-icon">
+        <div class="warning-box">
+          <div class="warning-icon">
             <iconify-icon icon="lucide:triangle-alert"></iconify-icon>
           </div>
-          <div class="alert-content">
-            <h3 class="alert-title">Budget Alert</h3>
-            <p class="alert-text">
+          <div class="warning-text">
+            <h3 class="warning-title">Budget Alert</h3>
+            <p class="warning-message">
               You've reached 85% of your Food budget for this month.
             </p>
           </div>
         </div>
 
         <!-- Goal Progress -->
-        <div class="goal-section">
-          <div class="goal-header">
-            <span class="goal-title">Goal Progress</span>
-            <a href="#" class="view-all" data-media-type="button"
-              >View All</a
-            >
+        <div class="savings-goal">
+          <div class="goal-top">
+            <span class="goal-name">Goal Progress</span>
+            <a href="#" class="view-all-link">View All</a>
           </div>
-          <div class="goal-info">
+          <div class="goal-details">
             <span>New Phone</span>
-            <span class="goal-percent">60%</span>
+            <span class="progress-percent">60%</span>
           </div>
-          <div class="progress-track">
-            <div class="progress-fill"></div>
+          <div class="progress-bar">
+            <div class="progress-bar-fill"></div>
           </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="actions-row">
-          <div class="action-btn primary" data-media-type="button">
+        <div class="quick-actions">
+          <div class="action-button primary">
             <iconify-icon icon="lucide:plus"></iconify-icon>
-            <span class="action-label">Expense</span>
+            <span class="button-label">Expense</span>
           </div>
-          <div class="action-btn secondary" data-media-type="button">
+          <div class="action-button secondary">
             <iconify-icon icon="lucide:banknote" class="budget-icon"></iconify-icon>
-            <span class="action-label">Budget</span>
+            <span class="button-label">Budget</span>
           </div>
-          <div class="action-btn secondary" data-media-type="button">
+          <div class="action-button secondary">
             <iconify-icon icon="lucide:target" class="goal-icon"></iconify-icon>
-            <span class="action-label">Goal</span>
+            <span class="button-label">Goal</span>
           </div>
         </div>
 
         <!-- Bottom Nav Links -->
-        <div class="footer-links">
-          <div class="footer-btn" data-media-type="button">
+        <div class="bottom-buttons">
+          <div class="action-card">
             <iconify-icon icon="lucide:bar-chart-3" class="reports-icon"></iconify-icon>
             <span>View Reports</span>
           </div>
-          <div class="footer-btn" data-media-type="button">
+          <div class="action-card">
             <iconify-icon icon="lucide:shopping-cart" class="compare-icon"></iconify-icon>
             <span>Compare Prices</span>
           </div>
