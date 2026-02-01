@@ -1,5 +1,5 @@
 :root {
-  --background: #fbfeff;
+  --background: #f7f7f7;
   --foreground: #0f1724;
   --border: #00000014;
   --input: #ffffff;
@@ -30,7 +30,6 @@ body {
 
 .page-container {
   width: 100%;
-  max-width: 375px;
   min-height: 100vh;
   position: relative;
   font-family: var(--font-family-body);
@@ -49,17 +48,30 @@ body {
   background-color: var(--background);
 }
 
-.header-left,
-.header-right {
-  width: 32px;
+.header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--primary-foreground);
 }
 
 .page-title {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--foreground);
+  flex: 1;
+  margin-left: 16px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .user-profile iconify-icon {
@@ -67,23 +79,18 @@ body {
   color: var(--foreground);
 }
 
-.icon-button {
-  border: none;
-  background: none;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+.back-button iconify-icon {
+  font-size: 24px;
+  color: #334155;
 }
 
-.icon-wrapper {
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
 }
+
 
 .icon-button iconify-icon {
   font-size: 35px;

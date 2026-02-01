@@ -1,5 +1,5 @@
 :root {
-  --background: #f7f7f7;;
+  --background: #f7f7f7;
   --foreground: #0f1724;
   --border: #00000014;
   --input: #ffffff;
@@ -49,7 +49,6 @@ body {
 
 .page-container {
   width: 100%;
-  max-width: 375px;
   min-height: 100vh;
   position: relative;
   font-family: var(--font-family-body);
