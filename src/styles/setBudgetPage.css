@@ -1,0 +1,187 @@
+:root {
+  --background: #f7f7f7;
+  --foreground: #0f1724;
+  --border: #00000014;
+  --input: #ffffff;
+  --primary: #06b6a4;
+  --primary-foreground: #ffffff;
+  --muted-foreground: #8a9199;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --font-family-body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.page-container {
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  position: relative;
+  font-family: var(--font-family-body);
+  background-color: var(--background);
+  color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--primary-foreground);
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--foreground);
+  flex: 1;
+  margin-left: 16px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.user-profile iconify-icon {
+  font-size: 35px;
+  color: var(--foreground);
+}
+
+.back-button iconify-icon {
+  font-size: 24px;
+  color: #334155;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+.icon-button iconify-icon {
+  font-size: 35px;
+  color: var(--foreground);
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Time frame toggle */
+.toggle-group {
+  display: flex;
+  border-radius: 999px;
+  background-color: rgba(6, 182, 164, 0.12);
+  padding: 4px;
+  gap: 4px;
+}
+
+.toggle-option {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--foreground);
+  background-color: transparent;
+}
+
+.toggle-option.active {
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1px #e5f9f6;
+  color: var(--primary);
+}
+
+/* Budget amount */
+.amount-input {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background-color: var(--input);
+  padding: 16px 16px;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.currency-symbol {
+  margin-right: 4px;
+}
+
+/* Save button */
+.page-footer {
+  margin-top: auto;
+  padding: 0 16px 32px 16px;
+}
+
+.save-button {
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.button-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon iconify-icon {
+  font-size: 18px;
+  color: var(--primary-foreground);
+}
