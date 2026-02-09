@@ -13,8 +13,8 @@ import AIAssistantPage from './pages/AIAssistantPage';
 import './App.css';
 
 function App() {
-  // TODO: Add authentication check with Supabase
-  const isAuthenticated = true;
+  // Check if user is logged in
+  const isAuthenticated = !!localStorage.getItem('userId');
 
   return (
     <Router>

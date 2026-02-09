@@ -53,7 +53,6 @@ const SetBudgetPage: React.FC = () => {
               value={budget.amount || 0}
               onChange={(e) => setBudget({ ...budget, amount: parseFloat(e.target.value) })}
               placeholder="0.00"
-              style={{ border: 'none', outline: 'none', background: 'transparent', fontSize: '32px', fontWeight: 700 }}
             />
           </div>
         </section>

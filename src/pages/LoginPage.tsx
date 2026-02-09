@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../dataBase/supabase';
 import '../styles/loginPage.css';
 
 const LoginPage: React.FC = () => {
@@ -9,10 +10,41 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
-    // Supabase login logic will be implemented here
-    console.log('Login:', { username, password });
-    // For now, navigate to dashboard
-    navigate('/dashboard');
+    if (!username || !password) {
+      alert('Please enter username and password!');
+      return;
+    }
+
+    try {
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('username', username)
+        .single();
+
+      if (error || !data) {
+        alert('Invalid username or password!');
+        return;
+      }
+
+     
+      if (data.password !== password) {
+        alert('Invalid username or password!');
+        return;
+      }
+
+      localStorage.setItem('userId', data.id);
+      localStorage.setItem('username', data.username);
+      localStorage.setItem('fullName', data.full_name);
+      localStorage.setItem('email', data.email);
+
+      // Navigate to dashboard
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('An error occurred during login.');
+    }
   };
 
   const handleSignup = () => {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../dataBase/supabase';
 import '../styles/signinPage.css';
 
 const RegisterPage: React.FC = () => {
@@ -23,10 +24,53 @@ const RegisterPage: React.FC = () => {
       alert('Passwords do not match!');
       return;
     }
-    // Supabase registration logic will be implemented here
-    console.log('Register:', formData);
-    // Navigate to login after successful registration
-    navigate('/login');
+
+    if (!formData.fullName || !formData.email || !formData.username || !formData.password) {
+      alert('Please fill in all fields!');
+      return;
+    }
+
+    try {
+      // Check if username or email already exists
+      const { data: existingUser } = await supabase
+        .from('users')
+        .select('username, email')
+        .or(`username.eq.${formData.username},email.eq.${formData.email}`);
+
+      if (existingUser && existingUser.length > 0) {
+        if (existingUser.some(user => user.username === formData.username)) {
+          alert('Username already exists!');
+        } else {
+          alert('Email already exists!');
+        }
+        return;
+      }
+
+      // Insert new user
+      const { error } = await supabase
+        .from('users')
+        .insert([
+          {
+            full_name: formData.fullName,
+            email: formData.email,
+            username: formData.username,
+            password: formData.password
+          }
+        ])
+        .select();
+
+      if (error) {
+        console.error('Registration error:', error);
+        alert('Registration failed: ' + error.message);
+        return;
+      }
+
+      alert('Registration successful! Please login.');
+      navigate('/login');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred during registration.');
+    }
   };
 
   const handleLoginRedirect = () => {

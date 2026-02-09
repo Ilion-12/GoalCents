@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMediaQuery } from 'react-responsive';
 import Header from '../components/Header';
 import type { Expense } from '../types';
 import '../styles/addExpenesePage.css';
 
 const AddExpensePage: React.FC = () => {
   const navigate = useNavigate();
-  const isMobile = useMediaQuery({ maxWidth: 768 });
   const [expense, setExpense] = useState<Partial<Expense>>({
     amount: 0,
     date: new Date().toISOString().split('T')[0],
@@ -32,7 +30,7 @@ const AddExpensePage: React.FC = () => {
 
       <main className="main-content">
         {/* Amount */}
-        <div className="amount-display" style={isMobile ? { padding: '24px 16px' } : {}}>
+        <div className="amount-display">
           <label className="field-label">AMOUNT</label>
           <div className="amount-wrapper">
             <input
@@ -41,13 +39,12 @@ const AddExpensePage: React.FC = () => {
               value={expense.amount || 0}
               onChange={(e) => setExpense({ ...expense, amount: parseFloat(e.target.value) })}
               placeholder="₱0.00"
-              style={isMobile ? { fontSize: '36px' } : {}}
             />
           </div>
         </div>
 
         {/* Date */}
-        <div className="input-field">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '0 20px' }}>
           <label className="field-label normal">Date</label>
           <div className="input-container">
             <iconify-icon icon="lucide:calendar"></iconify-icon>
@@ -56,13 +53,12 @@ const AddExpensePage: React.FC = () => {
               className="input-value"
               value={expense.date}
               onChange={(e) => setExpense({ ...expense, date: e.target.value })}
-              style={{ border: 'none', outline: 'none', background: 'transparent', flex: 1 }}
             />
           </div>
         </div>
 
         {/* Category */}
-        <div className="input-field">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '0 20px' }}>
           <label className="field-label normal">Category</label>
           <div className="input-container">
             <iconify-icon icon="lucide:tag"></iconify-icon>
@@ -70,7 +66,6 @@ const AddExpensePage: React.FC = () => {
               className="input-value"
               value={expense.category}
               onChange={(e) => setExpense({ ...expense, category: e.target.value })}
-              style={{ border: 'none', outline: 'none', background: 'transparent', flex: 1 }}
             >
               <option>Food & Dining</option>
               <option>Transportation</option>
@@ -79,7 +74,6 @@ const AddExpensePage: React.FC = () => {
               <option>Healthcare</option>
               <option>Shopping</option>
             </select>
-            <iconify-icon icon="lucide:chevron-down"></iconify-icon>
           </div>
         </div>
 
@@ -97,7 +91,7 @@ const AddExpensePage: React.FC = () => {
         </div>
 
         {/* Description */}
-        <div className="input-field">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '0 20px' }}>
           <label className="field-label normal">Description</label>
           <div className="input-container large">
             <input
@@ -106,7 +100,6 @@ const AddExpensePage: React.FC = () => {
               placeholder="Lunch at Joe's"
               value={expense.description}
               onChange={(e) => setExpense({ ...expense, description: e.target.value })}
-              style={{ border: 'none', outline: 'none', background: 'transparent', width: '100%' }}
             />
           </div>
         </div>
@@ -114,7 +107,7 @@ const AddExpensePage: React.FC = () => {
         <div className="divider"></div>
 
         {/* Essential Toggle */}
-        <div className="input-field">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '0 20px' }}>
           <label className="field-label normal">Is this essential?</label>
           <div className="toggle-buttons">
             <div

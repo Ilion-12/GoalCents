@@ -48,6 +48,7 @@
 }
 
 .logo-section {
+  padding-top: 100px;
   margin-bottom: 40px;
   display: flex;
   flex-direction: column;
