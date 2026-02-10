@@ -127,7 +127,7 @@ const RegisterPage: React.FC = () => {
           <div className="form-input password">
             <input
               type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
+              placeholder=""
               value={formData.password}
               onChange={(e) => handleChange('password', e.target.value)}
               style={{ border: 'none', outline: 'none', background: 'transparent', flex: 1 }}
@@ -145,7 +145,7 @@ const RegisterPage: React.FC = () => {
           <div className="form-input password">
             <input
               type={showConfirmPassword ? 'text' : 'password'}
-              placeholder="••••••••"
+              placeholder=""
               value={formData.confirmPassword}
               onChange={(e) => handleChange('confirmPassword', e.target.value)}
               style={{ border: 'none', outline: 'none', background: 'transparent', flex: 1 }}

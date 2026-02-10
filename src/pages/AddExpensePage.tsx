@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import { supabase } from '../dataBase/supabase';
 import type { Expense } from '../types';
 import '../styles/addExpenesePage.css';
 
@@ -8,16 +9,88 @@ const AddExpensePage: React.FC = () => {
   const navigate = useNavigate();
   const [expense, setExpense] = useState<Partial<Expense>>({
     amount: 0,
-    date: new Date().toISOString().split('T')[0],
+    expense_date: new Date().toISOString().split('T')[0],
     category: 'Food & Dining',
     description: '',
-    isEssential: true
+    is_essential: true
   });
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string>('');
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  const fetchUser = async () => {
+    try {
+      // Get user data from localStorage
+      const userId = localStorage.getItem('userId');
+      
+      if (!userId) {
+        console.error('No user logged in');
+        navigate('/login');
+        return;
+      }
+      
+      setUserId(userId);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      navigate('/login');
+    }
+  };
 
   const handleSave = async () => {
-    // Supabase save logic will be implemented here
-    console.log('Save expense:', expense);
-    navigate('/dashboard');
+    if (!expense.amount || expense.amount <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+
+    if (!expense.description || expense.description.trim() === '') {
+      alert('Please enter a description');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const currentUserId = userId || localStorage.getItem('userId');
+      
+      if (!currentUserId) {
+        alert('Please login first');
+        navigate('/login');
+        return;
+      }
+      
+      const { data, error } = await supabase
+        .from('expenses')
+        .insert([{
+          user_id: currentUserId,
+          amount: expense.amount,
+          category: expense.category,
+          description: expense.description,
+          expense_date: expense.expense_date,
+          is_essential: expense.is_essential
+        }])
+        .select();
+
+      if (error) {
+        console.error('Detailed error:', error);
+        if (error.message) {
+          alert(`Error: ${error.message}. Please check SUPABASE_FIX.sql if you see RLS errors.`);
+        } else {
+          throw error;
+        }
+        setLoading(false);
+        return;
+      }
+
+      console.log('Expense saved successfully:', data);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error saving expense:', error);
+      alert('Failed to save expense. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBack = () => {
@@ -51,8 +124,8 @@ const AddExpensePage: React.FC = () => {
             <input
               type="date"
               className="input-value"
-              value={expense.date}
-              onChange={(e) => setExpense({ ...expense, date: e.target.value })}
+              value={expense.expense_date}
+              onChange={(e) => setExpense({ ...expense, expense_date: e.target.value })}
             />
           </div>
         </div>
@@ -111,14 +184,14 @@ const AddExpensePage: React.FC = () => {
           <label className="field-label normal">Is this essential?</label>
           <div className="toggle-buttons">
             <div
-              className={`toggle-option ${expense.isEssential ? 'active' : ''}`}
-              onClick={() => setExpense({ ...expense, isEssential: true })}
+              className={`toggle-option ${expense.is_essential ? 'active' : ''}`}
+              onClick={() => setExpense({ ...expense, is_essential: true })}
             >
               Yes
             </div>
             <div
-              className={`toggle-option ${!expense.isEssential ? 'active' : ''}`}
-              onClick={() => setExpense({ ...expense, isEssential: false })}
+              className={`toggle-option ${!expense.is_essential ? 'active' : ''}`}
+              onClick={() => setExpense({ ...expense, is_essential: false })}
             >
               No
             </div>
@@ -126,9 +199,9 @@ const AddExpensePage: React.FC = () => {
         </div>
 
         {/* Save Button */}
-        <button className="save-button" onClick={handleSave}>
-          <iconify-icon icon="lucide:save"></iconify-icon>
-          Save Expense
+        <button className="save-button" onClick={handleSave} disabled={loading}>
+          <iconify-icon icon={loading ? "lucide:loader-2" : "lucide:save"}></iconify-icon>
+          {loading ? 'Saving...' : 'Save Expense'}
         </button>
       </main>
     </div>

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import { supabase } from '../dataBase/supabase';
 import type { Budget } from '../types';
 import '../styles/setBudgetPage.css';
 
@@ -8,13 +9,107 @@ const SetBudgetPage: React.FC = () => {
   const navigate = useNavigate();
   const [budget, setBudget] = useState<Partial<Budget>>({
     amount: 0,
-    timeFrame: 'week'
+    timeframe: 'week'
   });
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string>('');
+
+  useEffect(() => {
+    fetchUserAndBudget();
+  }, []);
+
+  const fetchUserAndBudget = async () => {
+    try {
+      // Get user data from localStorage
+      const userId = localStorage.getItem('userId');
+      
+      if (!userId) {
+        console.error('No user logged in');
+        navigate('/login');
+        return;
+      }
+      setUserId(userId);
+
+      // Fetch existing active budget
+      const { data, error } = await supabase
+        .from('budgets')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('is_active', true)
+        .single();
+
+      if (data && !error) {
+        setBudget({
+          amount: data.amount,
+          timeframe: data.timeframe
+        });
+      } else if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching budget:', error);
+      }
+    } catch (error) {
+      console.error('Error fetching budget:', error);
+    }
+  };
 
   const handleSave = async () => {
-    // Supabase save logic will be implemented here
-    console.log('Save budget:', budget);
-    navigate('/dashboard');
+    if (!budget.amount || budget.amount <= 0) {
+      alert('Please enter a valid budget amount');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Get current user ID from localStorage if not already set
+      const currentUserId = userId || localStorage.getItem('userId');
+      
+      if (!currentUserId) {
+        alert('Please login first');
+        navigate('/login');
+        return;
+      }
+
+      // Deactivate all existing budgets
+      await supabase
+        .from('budgets')
+        .update({ is_active: false })
+        .eq('user_id', currentUserId);
+
+      // Insert new budget
+      const { data, error } = await supabase
+        .from('budgets')
+        .insert([{
+          user_id: currentUserId,
+          amount: budget.amount,
+          timeframe: budget.timeframe,
+          is_active: true
+        }])
+        .select();
+
+      if (error) {
+        console.error('Detailed error:', error);
+        if (error.code === '23514') {
+          alert('Database constraint error. Please check SUPABASE_FIX.sql file and run it in your Supabase SQL Editor.');
+        } else if (error.message) {
+          alert(`Error: ${error.message}`);
+        } else {
+          throw error;
+        }
+        setLoading(false);
+        return;
+      }
+
+      console.log('Budget saved successfully:', data);
+      navigate('/dashboard');
+    } catch (error: unknown) {
+      console.error('Error saving budget:', error);
+      if (error && typeof error === 'object' && 'message' in error) {
+        alert(`Failed to save budget: ${(error as { message: string }).message}`);
+      } else {
+        alert('Data base error occurred while saving budget. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBack = () => {
@@ -30,14 +125,14 @@ const SetBudgetPage: React.FC = () => {
           <div className="section-label">Time Frame</div>
           <div className="toggle-group">
             <div
-              className={`toggle-option ${budget.timeFrame === 'week' ? 'active' : ''}`}
-              onClick={() => setBudget({ ...budget, timeFrame: 'week' })}
+              className={`toggle-option ${budget.timeframe === 'week' ? 'active' : ''}`}
+              onClick={() => setBudget({ ...budget, timeframe: 'week' })}
             >
               Week
             </div>
             <div
-              className={`toggle-option ${budget.timeFrame === 'month' ? 'active' : ''}`}
-              onClick={() => setBudget({ ...budget, timeFrame: 'month' })}
+              className={`toggle-option ${budget.timeframe === 'month' ? 'active' : ''}`}
+              onClick={() => setBudget({ ...budget, timeframe: 'month' })}
             >
               Month
             </div>
@@ -59,11 +154,11 @@ const SetBudgetPage: React.FC = () => {
       </main>
 
       <div className="page-footer">
-        <button className="save-button" onClick={handleSave}>
+        <button className="save-button" onClick={handleSave} disabled={loading}>
           <div className="button-icon">
-            <iconify-icon icon="lucide:wallet"></iconify-icon>
+            <iconify-icon icon={loading ? "lucide:loader-2" : "lucide:wallet"}></iconify-icon>
           </div>
-          <span>Save Budget</span>
+          <span>{loading ? 'Saving...' : 'Save Budget'}</span>
         </button>
       </div>
     </div>

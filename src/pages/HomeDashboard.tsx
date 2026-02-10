@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import Header from '../components/Header';
+import { supabase } from '../dataBase/supabase';
 import type { BudgetSummary } from '../types';
 import '../styles/homeDashboard.css';
 
@@ -10,29 +11,144 @@ const HomeDashboard: React.FC = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
   const [summary, setSummary] = useState<BudgetSummary>({
-    totalBudget: 25000,
-    totalSpent: 18450,
-    remaining: 6550,
-    weeklySpent: 4250,
-    monthlySpent: 18450
+    totalBudget: 0,
+    totalSpent: 0,
+    remaining: 0,
+    weeklySpent: 0,
+    monthlySpent: 0
   });
+  const [savingsGoal, setSavingsGoal] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState('User');
 
-  // This will be replaced with Supabase data fetching
   useEffect(() => {
-    // Fetch budget summary from Supabase
-    console.log('Fetch budget summary');
+    fetchDashboardData();
   }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      // Get user data from localStorage
+      const userId = localStorage.getItem('userId');
+      const fullName = localStorage.getItem('fullName');
+      const username = localStorage.getItem('username');
+      
+      if (!userId) {
+        console.error('No user logged in');
+        navigate('/login');
+        return;
+      }
+      
+      // Set user name
+      if (fullName) {
+        setUserName(fullName);
+      } else if (username) {
+        setUserName(username);
+      }
+
+      // Fetch active budget
+      const { data: budgetData, error: budgetError } = await supabase
+        .from('budgets')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('is_active', true)
+        .single();
+
+      if (budgetError && budgetError.code !== 'PGRST116') {
+        console.error('Error fetching budget:', budgetError);
+      }
+
+      // Fetch all expenses
+      const { data: expensesData, error: expensesError } = await supabase
+        .from('expenses')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (expensesError) {
+        console.error('Error fetching expenses:', expensesError);
+      }
+
+      // Fetch savings goal
+      const { data: goalData, error: goalError } = await supabase
+        .from('savings_goal')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (goalError && goalError.code !== 'PGRST116') {
+        console.error('Error fetching goal:', goalError);
+      }
+
+      // Calculate totals
+      let totalSpent = 0;
+      let weeklySpent = 0;
+      let monthlySpent = 0;
+
+      const now = new Date();
+      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+
+      if (expensesData) {
+        expensesData.forEach(expense => {
+          const expenseDate = new Date(expense.expense_date);
+          totalSpent += expense.amount;
+          
+          if (expenseDate >= oneWeekAgo) {
+            weeklySpent += expense.amount;
+          }
+          
+          if (expenseDate >= oneMonthAgo) {
+            monthlySpent += expense.amount;
+          }
+        });
+      }
+
+      const totalBudget = budgetData?.amount || 0;
+      const remaining = totalBudget - totalSpent;
+
+      setSummary({
+        totalBudget,
+        totalSpent,
+        remaining,
+        weeklySpent,
+        monthlySpent
+      });
+
+      if (goalData) {
+        setSavingsGoal(goalData);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNavigation = (path: string) => {
     navigate(path);
   };
+
+  const budgetPercentage = summary.totalBudget > 0 ? (summary.totalSpent / summary.totalBudget) * 100 : 0;
+  const savingsProgress = savingsGoal ? Math.round((savingsGoal.current_amount / savingsGoal.target_amount) * 100) : 0;
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <Header title="Home" showMenu={true} showUserProfile={true} />
+        <main className="main-content">
+          <div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
       <Header title="Home" showMenu={true} showUserProfile={true} />
 
       <main className="main-content">
-        <h2 className="greeting" style={isMobile ? { fontSize: '24px' } : {}}>Hello, Troy! 👋</h2>
+        <h2 className="greeting" style={isMobile ? { fontSize: '24px' } : {}}>Hello, {userName}! 👋</h2>
 
         {/* Main Budget Card */}
         <div className="budget-summary">
@@ -68,34 +184,38 @@ const HomeDashboard: React.FC = () => {
         </div>
 
         {/* Alert */}
-        <div className="warning-box">
-          <div className="warning-icon">
-            <iconify-icon icon="lucide:triangle-alert"></iconify-icon>
+        {budgetPercentage >= 80 && (
+          <div className="warning-box">
+            <div className="warning-icon">
+              <iconify-icon icon="lucide:triangle-alert"></iconify-icon>
+            </div>
+            <div className="warning-text">
+              <h3 className="warning-title">Budget Alert</h3>
+              <p className="warning-message">
+                You've spent {Math.round(budgetPercentage)}% of your budget. {budgetPercentage >= 100 ? 'Budget exceeded!' : 'Try to reduce non-essential expenses.'}
+              </p>
+            </div>
           </div>
-          <div className="warning-text">
-            <h3 className="warning-title">Budget Alert</h3>
-            <p className="warning-message">
-              You've spent 73% of your budget. Try to reduce non-essential expenses.
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* Goal Progress */}
-        <div className="savings-goal">
-          <div className="goal-top">
-            <span className="goal-name">Goal Progress</span>
-            <a href="#" className="view-all-link" onClick={(e) => { e.preventDefault(); handleNavigation('/savings-goals'); }}>
-              View All
-            </a>
+        {savingsGoal && (
+          <div className="savings-goal">
+            <div className="goal-top">
+              <span className="goal-name">Goal Progress</span>
+              <a href="#" className="view-all-link" onClick={(e) => { e.preventDefault(); handleNavigation('/savings-goals'); }}>
+                View All
+              </a>
+            </div>
+            <div className="goal-details">
+              <span>{savingsGoal.goal_name}</span>
+              <span className="progress-percent">{savingsProgress}%</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-bar-fill" style={{ width: `${savingsProgress}%` }}></div>
+            </div>
           </div>
-          <div className="goal-details">
-            <span>New Phone</span>
-            <span className="progress-percent">60%</span>
-          </div>
-          <div className="progress-bar">
-            <div className="progress-bar-fill" style={{ width: '60%' }}></div>
-          </div>
-        </div>
+        )}
 
         {/* Action Buttons */}
         <div className="quick-actions">

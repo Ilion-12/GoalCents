@@ -79,7 +79,7 @@ const LoginPage: React.FC = () => {
           <div className="text-input password-input">
             <input
               type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
+              placeholder=""
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{ border: 'none', outline: 'none', background: 'transparent', flex: 1 }}

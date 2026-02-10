@@ -1,5 +1,7 @@
 // TypeScript interfaces for Supabase integration
 
+
+
 export interface User {
   id: string;
   username: string;
@@ -11,32 +13,33 @@ export interface User {
 
 export interface Budget {
   id: string;
-  userId: string;
+  user_id: string;
   amount: number;
-  timeFrame: 'week' | 'month';
-  createdAt: string;
-  updatedAt: string;
+  timeframe: 'week' | 'month';
+  is_active: boolean;
+  created_at: string;
 }
 
 export interface Expense {
   id: string;
-  userId: string;
+  user_id: string;
   amount: number;
   category: string;
   description: string;
-  date: string;
-  isEssential: boolean;
-  createdAt: string;
+  expense_date: string;
+  is_essential: boolean;
+  ai_category?: string;
+  ai_note?: string;
+  created_at: string;
 }
 
 export interface SavingsGoal {
   id: string;
-  userId: string;
-  name: string;
-  targetAmount: number;
-  savedAmount: number;
-  createdAt: string;
-  updatedAt: string;
+  user_id: string;
+  goal_name: string;
+  target_amount: number;
+  current_amount: number;
+  created_at: string;
 }
 
 export interface PriceComparison {
@@ -74,4 +77,17 @@ export interface SpendingCategory {
 export interface ChartData {
   labels: string[];
   values: number[];
+}
+
+
+export interface CategoryData {
+  category: string;
+  amount: number;
+  percentage: number;
+  isEssential: boolean;
+}
+
+export interface TrendData {
+  period: string;
+  amount: number;
 }
