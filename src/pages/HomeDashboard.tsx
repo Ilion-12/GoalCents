@@ -219,7 +219,7 @@ const HomeDashboard: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="quick-actions">
-          <div className="action-button primary" onClick={() => handleNavigation('/add-expense')}>
+          <div className="action-button secondary" onClick={() => handleNavigation('/add-expense')}>
             <iconify-icon icon="lucide:plus"></iconify-icon>
             <span className="button-label">Expense</span>
           </div>
@@ -233,15 +233,18 @@ const HomeDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Nav Links */}
-        <div className="bottom-buttons">
-          <div className="action-card" onClick={() => handleNavigation('/analytics')}>
+        <div className="quick-actions">
+          <div className="action-button secondary" onClick={() => handleNavigation('/analytics')}>
             <iconify-icon icon="lucide:bar-chart-3" className="reports-icon"></iconify-icon>
-            <span>View Reports</span>
+            <span className="button-label">Reports</span>
           </div>
-          <div className="action-card" onClick={() => handleNavigation('/price-comparison')}>
+          <div className="action-button secondary" onClick={() => handleNavigation('/spending')}>
+            <iconify-icon  icon="lucide:pie-chart" className="spending-icon"></iconify-icon>
+            <span className="button-label">Spending</span>
+          </div>
+          <div className="action-button secondary" onClick={() => handleNavigation('/price-comparison')}>
             <iconify-icon icon="lucide:shopping-cart" className="compare-icon"></iconify-icon>
-            <span>Compare Prices</span>
+            <span className="button-label">Prices</span>
           </div>
         </div>
       </main>

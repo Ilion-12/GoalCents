@@ -2,38 +2,110 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import Header from '../components/Header';
-import type { SpendingCategory } from '../types';
+import { supabase } from '../dataBase/supabase';
 import '../styles/spendingPage.css';
+
+interface ExpenseItem {
+  id: string;
+  description: string;
+  expense_date: string;
+  amount: number;
+  category: string;
+}
 
 const SpendingPage: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const [essentialTotal, setEssentialTotal] = useState(15400);
-  const [nonEssentialTotal, setNonEssentialTotal] = useState(4200);
+  const [essentialTotal, setEssentialTotal] = useState(0);
+  const [nonEssentialTotal, setNonEssentialTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
   
-  const [essentialExpenses] = useState([
-    { name: 'Rent', date: 'Jan 15', amount: 10000 },
-    { name: 'Groceries', date: 'Jan 20', amount: 4500 },
-    { name: 'Utilities', date: 'Jan 25', amount: 900 }
-  ]);
-
-  const [nonEssentialExpenses] = useState([
-    { name: 'Coffee Shop', date: 'Jan 22', amount: 350 },
-    { name: 'Movie Tickets', date: 'Jan 23', amount: 600 },
-    { name: 'Shopping', date: 'Jan 28', amount: 3250 }
-  ]);
+  const [essentialExpenses, setEssentialExpenses] = useState<ExpenseItem[]>([]);
+  const [nonEssentialExpenses, setNonEssentialExpenses] = useState<ExpenseItem[]>([]);
 
   const total = essentialTotal + nonEssentialTotal;
-  const essentialPercent = Math.round((essentialTotal / total) * 100);
+  const essentialPercent = total > 0 ? Math.round((essentialTotal / total) * 100) : 50;
 
   useEffect(() => {
-    // Fetch spending data from Supabase
-    console.log('Fetch spending data');
+    fetchSpendingData();
   }, []);
+
+  const fetchSpendingData = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        navigate('/login');
+        return;
+      }
+
+      // Fetch all expenses
+      const { data: expensesData, error } = await supabase
+        .from('expenses')
+        .select('*')
+        .eq('user_id', userId)
+        .order('expense_date', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching expenses:', error);
+        return;
+      }
+
+      if (expensesData) {
+        // Separate essential and non-essential expenses
+        const essential: ExpenseItem[] = [];
+        const nonEssential: ExpenseItem[] = [];
+        let essentialSum = 0;
+        let nonEssentialSum = 0;
+
+        expensesData.forEach(expense => {
+          const item: ExpenseItem = {
+            id: expense.id,
+            description: expense.description,
+            expense_date: expense.expense_date,
+            amount: expense.amount,
+            category: expense.category
+          };
+
+          if (expense.is_essential) {
+            essential.push(item);
+            essentialSum += expense.amount;
+          } else {
+            nonEssential.push(item);
+            nonEssentialSum += expense.amount;
+          }
+        });
+
+        setEssentialExpenses(essential);
+        setNonEssentialExpenses(nonEssential);
+        setEssentialTotal(essentialSum);
+        setNonEssentialTotal(nonEssentialSum);
+      }
+    } catch (error) {
+      console.error('Error fetching spending data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
 
   const handleBack = () => {
     navigate(-1);
   };
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <Header title="Spending Split" onBackClick={handleBack} showUserProfile={true} />
+        <main className="main-content">
+          <div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
@@ -99,33 +171,45 @@ const SpendingPage: React.FC = () => {
         {/* Detailed List: Essential */}
         <div className="expenses-section">
           <div className="section-heading">Essential Expenses</div>
-          <div className="expense-list">
-            {essentialExpenses.map((expense, index) => (
-              <div key={index} className="expense-row">
-                <div className="expense-info">
-                  <span className="expense-name">{expense.name}</span>
-                  <span className="expense-date">{expense.date}</span>
+          {essentialExpenses.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '20px', color: 'var(--muted-foreground)' }}>
+              No essential expenses yet
+            </div>
+          ) : (
+            <div className="expense-list">
+              {essentialExpenses.map((expense) => (
+                <div key={expense.id} className="expense-row">
+                  <div className="expense-info">
+                    <span className="expense-name">{expense.description || expense.category}</span>
+                    <span className="expense-date">{formatDate(expense.expense_date)}</span>
+                  </div>
+                  <span className="expense-amount">₱{expense.amount.toLocaleString()}</span>
                 </div>
-                <span className="expense-amount">₱{expense.amount.toLocaleString()}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Detailed List: Non-Essential */}
         <div className="expenses-section">
           <div className="section-heading">Non-Essential Expenses</div>
-          <div className="expense-list">
-            {nonEssentialExpenses.map((expense, index) => (
-              <div key={index} className="expense-row">
-                <div className="expense-info">
-                  <span className="expense-name">{expense.name}</span>
-                  <span className="expense-date">{expense.date}</span>
+          {nonEssentialExpenses.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '20px', color: 'var(--muted-foreground)' }}>
+              No non-essential expenses yet
+            </div>
+          ) : (
+            <div className="expense-list">
+              {nonEssentialExpenses.map((expense) => (
+                <div key={expense.id} className="expense-row">
+                  <div className="expense-info">
+                    <span className="expense-name">{expense.description || expense.category}</span>
+                    <span className="expense-date">{formatDate(expense.expense_date)}</span>
+                  </div>
+                  <span className="expense-amount">₱{expense.amount.toLocaleString()}</span>
                 </div>
-                <span className="expense-amount">₱{expense.amount.toLocaleString()}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
     </div>
