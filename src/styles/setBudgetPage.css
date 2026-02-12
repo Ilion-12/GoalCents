@@ -113,7 +113,7 @@
 /* Time frame toggle */
 .toggle-group {
   display: flex;
-  border-radius: 999px;
+  border-radius: var(--radius-lg);
   background-color: rgba(6, 182, 164, 0.12);
   padding: 4px;
   gap: 4px;
@@ -125,7 +125,7 @@
   padding: 10px 0;
   font-size: 14px;
   font-weight: 500;
-  border-radius: 999px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   color: var(--foreground);
   background-color: transparent;
@@ -199,10 +199,7 @@
     font-size: 24px;
   }
 
-  .page-footer {
-    padding: 0 12px 24px 12px;
-  }
-
+ 
   .save-button {
     padding: 14px;
     font-size: 14px;
@@ -247,9 +244,6 @@
     font-size: 10px;
   }
 
-  .page-footer {
-    padding: 0 12px 20px 12px;
-  }
 
   .save-button {
     padding: 12px;
@@ -262,12 +256,10 @@
 }
 
 /* Save button */
-.page-footer {
-  margin-top: auto;
-  padding: 0 16px 32px 16px;
-}
+
 
 .save-button {
+ margin-top: 370px;
   width: 100%;
   border: none;
   border-radius: var(--radius-md);

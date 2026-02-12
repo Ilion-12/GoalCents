@@ -98,7 +98,7 @@ const AddExpensePage: React.FC = () => {
   };
 
   return (
-    <div className="page-container">
+    <div className="">
       <Header title="Add Expense" onBackClick={handleBack} showUserProfile={true} />
 
       <main className="main-content">
@@ -146,6 +146,7 @@ const AddExpensePage: React.FC = () => {
               <option>Entertainment</option>
               <option>Healthcare</option>
               <option>Shopping</option>
+              <option>Bills</option>
             </select>
           </div>
         </div>

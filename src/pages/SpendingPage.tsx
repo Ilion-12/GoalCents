@@ -2,16 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import Header from '../components/Header';
+import type { ExpenseItem } from '../types';
 import { supabase } from '../dataBase/supabase';
 import '../styles/spendingPage.css';
 
-interface ExpenseItem {
-  id: string;
-  description: string;
-  expense_date: string;
-  amount: number;
-  category: string;
-}
+
 
 const SpendingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -108,7 +103,7 @@ const SpendingPage: React.FC = () => {
   }
 
   return (
-    <div className="page-container">
+    <div>
       <Header title="Spending Split" onBackClick={handleBack} showUserProfile={true} />
 
       <main className="main-content">
@@ -180,7 +175,8 @@ const SpendingPage: React.FC = () => {
               {essentialExpenses.map((expense) => (
                 <div key={expense.id} className="expense-row">
                   <div className="expense-info">
-                    <span className="expense-name">{expense.description || expense.category}</span>
+                    <span className="expense-category">{expense.category}</span>
+                    <span className="expense-name">{expense.description}</span>
                     <span className="expense-date">{formatDate(expense.expense_date)}</span>
                   </div>
                   <span className="expense-amount">₱{expense.amount.toLocaleString()}</span>
@@ -202,7 +198,8 @@ const SpendingPage: React.FC = () => {
               {nonEssentialExpenses.map((expense) => (
                 <div key={expense.id} className="expense-row">
                   <div className="expense-info">
-                    <span className="expense-name">{expense.description || expense.category}</span>
+                    <span className="expense-category">{expense.category}</span>
+                    <span className="expense-name">{expense.description}</span>
                     <span className="expense-date">{formatDate(expense.expense_date)}</span>
                   </div>
                   <span className="expense-amount">₱{expense.amount.toLocaleString()}</span>

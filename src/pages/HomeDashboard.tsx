@@ -144,7 +144,7 @@ const HomeDashboard: React.FC = () => {
   }
 
   return (
-    <div className="page-container">
+    <div className="">
       <Header title="Home" showMenu={true} showUserProfile={true} />
 
       <main className="main-content">

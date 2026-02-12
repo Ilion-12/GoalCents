@@ -91,3 +91,40 @@ export interface TrendData {
   period: string;
   amount: number;
 }
+
+export interface Expense {
+  id: string;
+  user_id: string;
+  amount: number;
+  category: string;
+  description: string;
+  expense_date: string;
+  is_essential: boolean;
+  ai_category?: string;
+  ai_note?: string;
+  created_at: string;
+}
+
+export interface SavingsGoal {
+  id: string;
+  user_id: string;
+  goal_name: string;
+  target_amount: number;
+  current_amount: number;
+  created_at: string;
+}
+
+export interface Alert {
+  type: 'warning' | 'info' | 'success';
+  icon: string;
+  title: string;
+  message: string;
+}
+
+export interface ExpenseItem {
+  id: string;
+  description: string;
+  expense_date: string;
+  amount: number;
+  category: string;
+}

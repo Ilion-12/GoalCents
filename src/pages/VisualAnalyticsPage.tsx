@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import Header from '../components/Header';
 import { supabase } from '../dataBase/supabase';
+import type { CategoryData, TrendData, Expense, SavingsGoal, Alert } from '../types';
 import '../styles/visualAnalyticsPage.css';
 
 
@@ -17,11 +18,11 @@ const VisualAnalyticsPage: React.FC = () => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [showEssentialOnly, setShowEssentialOnly] = useState(false);
   const [budget, setBudget] = useState({ total: 0, spent: 0, remaining: 0, percentage: 0 });
-  const [savingsGoal, setSavingsGoal] = useState<any>(null);
+  const [savingsGoal, setSavingsGoal] = useState<SavingsGoal | null>(null);
   const [trendPeriod, setTrendPeriod] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
   const [trends, setTrends] = useState<TrendData[]>([]);
-  const [allExpenses, setAllExpenses] = useState<any[]>([]);
-  const [alerts, setAlerts] = useState<any[]>([]);
+  const [allExpenses, setAllExpenses] = useState<Expense[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
 
   const tabs = ['Overview', 'Spending', 'Trends', 'Budget', 'Savings', 'Alerts'];
   
@@ -33,17 +34,7 @@ const VisualAnalyticsPage: React.FC = () => {
   const savingsRef = useRef<HTMLDivElement>(null);
   const alertsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchAnalyticsData();
-  }, []);
-
-  useEffect(() => {
-    if (allExpenses.length > 0) {
-      calculateTrends();
-    }
-  }, [trendPeriod, allExpenses]);
-
-  const calculateTrends = () => {
+  const calculateTrends = useCallback(() => {
     const now = new Date();
     const trendsArray: TrendData[] = [];
 
@@ -104,9 +95,9 @@ const VisualAnalyticsPage: React.FC = () => {
     }
 
     setTrends(trendsArray);
-  };
+  }, [allExpenses, trendPeriod]);
 
-  const fetchAnalyticsData = async () => {
+  const fetchAnalyticsData = useCallback(async () => {
     try {
       const userId = localStorage.getItem('userId');
       if (!userId) {
@@ -177,10 +168,10 @@ const VisualAnalyticsPage: React.FC = () => {
         });
 
         // Generate alerts
-        const newAlerts = [];
+        const newAlerts: Alert[] = [];
         if (percentage >= 80) {
           newAlerts.push({
-            type: 'warning',
+            type: 'warning' as const,
             icon: 'lucide:alert-triangle',
             title: 'Budget Warning',
             message: `You have reached ${percentage}% of your ${budgetData?.timeframe || 'monthly'} budget.`
@@ -193,7 +184,7 @@ const VisualAnalyticsPage: React.FC = () => {
         
         if (essentialSpent > totalSpent * 0.3) {
           newAlerts.push({
-            type: 'info',
+            type: 'info' as const,
             icon: 'lucide:info',
             title: 'Spending Update',
             message: 'Non-essential expenses are higher than recommended.'
@@ -202,7 +193,7 @@ const VisualAnalyticsPage: React.FC = () => {
 
         if (percentage < 80 && totalBudget > 0) {
           newAlerts.push({
-            type: 'success',
+            type: 'success' as const,
             icon: 'lucide:check-circle-2',
             title: 'Great Job!',
             message: 'Staying under budget helps increase your savings.'
@@ -220,7 +211,17 @@ const VisualAnalyticsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    fetchAnalyticsData();
+  }, [fetchAnalyticsData]);
+
+  useEffect(() => {
+    if (allExpenses.length > 0) {
+      calculateTrends();
+    }
+  }, [calculateTrends, allExpenses]);
 
   const scrollToSection = (tab: string) => {
     setActiveTab(tab);
@@ -302,12 +303,48 @@ const VisualAnalyticsPage: React.FC = () => {
     ? Math.round((savingsGoal.current_amount / savingsGoal.target_amount) * 100) 
     : 0;
 
-  const calculateMonthsToGoal = () => {
-    if (!savingsGoal || budget.remaining <= 0) return 'N/A';
-    const remainingGoal = savingsGoal.target_amount - savingsGoal.current_amount;
-    const monthlyRemaining = budget.remaining;
-    const months = Math.ceil(remainingGoal / monthlyRemaining);
-    return months;
+const calculateMonthsToGoal = () => {
+  if (!savingsGoal) return 'N/A';
+
+  const remainingGoal =
+    savingsGoal.target_amount - savingsGoal.current_amount;
+
+  if (remainingGoal <= 0) return 'Goal Achieved 🎉';
+
+  if (budget.remaining <= 0) return 'No savings possible';
+
+  const months = Math.ceil(remainingGoal / budget.remaining);
+
+  return months;
+};
+
+  const getTotalSpending = () => {
+    return filteredCategories.reduce((sum, cat) => sum + cat.amount, 0);
+  };
+
+  const generateDonutGradient = () => {
+    if (filteredCategories.length === 0) {
+      return 'conic-gradient(var(--chart-4) 0% 100%)';
+    }
+
+    const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+    let currentPercent = 0;
+    const gradientParts: string[] = [];
+
+    filteredCategories.slice(0, 6).forEach((cat, index) => {
+      const startPercent = currentPercent;
+      currentPercent += cat.percentage;
+      const color = colors[index % colors.length];
+      gradientParts.push(`${color} ${startPercent}% ${currentPercent}%`);
+    });
+
+    // If there are remaining percentages (due to rounding), fill with last color
+    if (currentPercent < 100) {
+      const lastColor = colors[(filteredCategories.length - 1) % colors.length];
+      gradientParts.push(`${lastColor} ${currentPercent}% 100%`);
+    }
+
+    return `conic-gradient(${gradientParts.join(', ')})`;
   };
 
   if (loading) {
@@ -322,7 +359,7 @@ const VisualAnalyticsPage: React.FC = () => {
   }
 
   return (
-    <div className="page-container">
+    <div >
       <Header title="Visual Analytics" onBackClick={handleBack} showUserProfile={true} />
 
       <nav className="tab-navigation" style={isMobile ? { overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' } : {}}>
@@ -374,26 +411,43 @@ const VisualAnalyticsPage: React.FC = () => {
           </div>
 
           <div className="chart-wrapper">
-            <div className="donut-chart">
-              <div className="donut-inner">Total</div>
+            <div className="donut-chart" style={{ background: generateDonutGradient() }}>
+              <div className="donut-inner">
+                <div style={{ fontSize: '12px', color: 'var(--muted-foreground)', marginBottom: '4px' }}>Total</div>
+                <div style={{ fontSize: '16px', fontWeight: 'bold', color: 'var(--foreground)' }}>
+                  ₱{getTotalSpending().toLocaleString()}
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="chart-legend" style={isMobile ? { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' } : {}}>
             {filteredCategories.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--muted-foreground)' }}>
+              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--muted-foreground)', gridColumn: '1 / -1' }}>
                 No expenses to display
               </div>
             ) : (
-              filteredCategories.slice(0, 4).map((cat, index) => {
-                const colors = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
-                return (
-                  <div key={cat.category} className="legend-item">
-                    <div className="legend-dot" style={{ background: colors[index] }}></div>
-                    <span>{cat.category} ({cat.percentage}%)</span>
+              <>
+                {filteredCategories.slice(0, 6).map((cat, index) => {
+                  const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#e8eb25'];
+                  return (
+                    <div key={cat.category} className="legend-item">
+                      <div className="legend-dot" style={{ background: colors[index % colors.length] }}></div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flex: 1 }}>
+                        <span style={{ fontSize: '13px', fontWeight: '500' }}>{cat.category}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--muted-foreground)' }}>
+                          ₱{cat.amount.toLocaleString()} ({cat.percentage}%)
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+                {filteredCategories.length > 6 && (
+                  <div className="legend-item" style={{ gridColumn: '1 / -1', justifyContent: 'center', color: 'var(--muted-foreground)', fontSize: '12px' }}>
+                    +{filteredCategories.length - 6} more categories
                   </div>
-                );
-              })
+                )}
+              </>
             )}
           </div>
 

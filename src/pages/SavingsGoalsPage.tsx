@@ -166,7 +166,7 @@ const SavingsGoalsPage: React.FC = () => {
   };
 
   return (
-    <div className="page-container">
+    <div className="" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%'}}>
       <Header title="Savings Goal" onBackClick={handleBack} showUserProfile={true} />
 
       <main className="main-content">

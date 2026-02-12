@@ -203,17 +203,12 @@
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: conic-gradient(
-    var(--chart-1) 0% 35%,
-    var(--chart-2) 35% 60%,
-    var(--chart-3) 60% 85%,
-    var(--chart-4) 85% 100%
-  );
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin: 0 auto 24px auto;
   position: relative;
+  transition: all 0.3s ease;
 }
 
 .donut-inner {
@@ -222,6 +217,7 @@
   background-color: var(--card);
   border-radius: 50%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-weight: 700;
@@ -235,6 +231,8 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .chart-legend {
@@ -246,15 +244,18 @@
 
 .legend-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   font-size: 13px;
+  padding: 4px 0;
 }
 
 .legend-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
 }
 
 /* Filter Pills */

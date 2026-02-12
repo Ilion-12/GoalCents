@@ -88,7 +88,7 @@ const SetBudgetPage: React.FC = () => {
       if (error) {
         console.error('Detailed error:', error);
         if (error.code === '23514') {
-          alert('Database constraint error. Please check SUPABASE_FIX.sql file and run it in your Supabase SQL Editor.');
+          alert('Database constraint error.');
         } else if (error.message) {
           alert(`Error: ${error.message}`);
         } else {
@@ -117,7 +117,7 @@ const SetBudgetPage: React.FC = () => {
   };
 
   return (
-    <div className="page-container">
+    <div className="" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header title="Set Budget" onBackClick={handleBack} showUserProfile={true} />
 
       <main className="main-content">
@@ -150,17 +150,18 @@ const SetBudgetPage: React.FC = () => {
               placeholder="0.00"
             />
           </div>
-        </section>
-      </main>
-
-      <div className="page-footer">
+            
         <button className="save-button" onClick={handleSave} disabled={loading}>
           <div className="button-icon">
             <iconify-icon icon={loading ? "lucide:loader-2" : "lucide:wallet"}></iconify-icon>
           </div>
           <span>{loading ? 'Saving...' : 'Save Budget'}</span>
         </button>
-      </div>
+
+        </section>
+      </main>
+
+
     </div>
   );
 };
