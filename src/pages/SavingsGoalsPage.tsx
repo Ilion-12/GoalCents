@@ -9,7 +9,6 @@ const SavingsGoalsPage: React.FC = () => {
   const navigate = useNavigate();
   const [goal, setGoal] = useState<SavingsGoal | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string>('');
   const [isEditing, setIsEditing] = useState(false);
   const [editValues, setEditValues] = useState({
     goal_name: '',
@@ -31,8 +30,6 @@ const SavingsGoalsPage: React.FC = () => {
         navigate('/login');
         return;
       }
-      
-      setUserId(currentUserId);
 
       const { data, error } = await supabase
         .from('savings_goal')

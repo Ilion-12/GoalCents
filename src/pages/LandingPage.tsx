@@ -20,8 +20,8 @@ const LandingPage: React.FC = () => {
   return (
     <div className="page-container">
       <header className="page-header">
-        <div className="logo-icon">
-          <iconify-icon icon="lucide:wallet"></iconify-icon>
+        <div className="logo-wrapper">
+          <img src="/IMG/logo.png" alt="Smart Expense Tracker" className="logo-image" />
         </div>
         <h1 className="app-name">
           Smart Expense &amp;<br />Budget Tracker
@@ -103,7 +103,7 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <footer className="page-footer">
+  <footer style={{padding: "32px 24px", display: "flex", flexDirection: "row", flexWrap: "nowrap", justifyContent: "center", alignItems: "center", gap: 24, background: "var(--background)", borderTop: "1px solid var(--border)"}}>
         <span className="footer-link" onClick={() => handleNavigation('/dashboard')}>
           About
         </span>

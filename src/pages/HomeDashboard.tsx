@@ -3,13 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import Header from '../components/Header';
 import { supabase } from '../dataBase/supabase';
-import type { BudgetSummary } from '../types';
+import type { BudgetSummary, SavingsGoal } from '../types';
 import '../styles/homeDashboard.css';
 
 const HomeDashboard: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
   const [summary, setSummary] = useState<BudgetSummary>({
     totalBudget: 0,
     totalSpent: 0,
@@ -17,7 +16,7 @@ const HomeDashboard: React.FC = () => {
     weeklySpent: 0,
     monthlySpent: 0
   });
-  const [savingsGoal, setSavingsGoal] = useState<any>(null);
+  const [savingsGoal, setSavingsGoal] = useState<SavingsGoal | null>(null);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('User');
 

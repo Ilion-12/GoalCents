@@ -53,6 +53,19 @@
   text-align: center;
 }
 
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.logo-image {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
 .logo-icon {
   width: 64px;
   height: 64px;
@@ -198,6 +211,7 @@
   font-weight: 700;
   color: var(--foreground);
   margin-bottom: 4px;
+  text-align: center;
 }
 
 .benefits-list {
@@ -223,20 +237,13 @@
   font-size: 20px;
 }
 
-.page-footer {
-  padding: 32px 24px;
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  background: var(--background);
-  border-top: 1px solid var(--border);
-}
-
 .footer-link {
   font-size: 13px;
   color: var(--muted-foreground);
   text-decoration: none;
   font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 /* Responsive Media Queries */
@@ -281,18 +288,140 @@
 @media (min-width: 769px) and (max-width: 1024px) {
   .features {
     max-width: 720px;
-    margin: 0 auto;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
 
   .benefits {
     max-width: 720px;
     margin: 0 auto;
+    padding: 40px 32px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+  }
+
+  .install-button {
+    max-width: 400px;
   }
 }
 
 @media (min-width: 1025px) {
   .page-container {
-    max-width: 960px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    padding: 48px 40px 32px;
+    gap: 16px;
+  }
+
+  .logo-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .app-name {
+    font-size: 26px;
+  }
+
+  .hero {
+    padding: 60px 40px 40px;
+    gap: 16px;
+  }
+
+  .hero-title {
+    font-size: 48px;
+    max-width: 700px;
+  }
+
+  .hero-subtitle {
+    font-size: 22px;
+    color: var(--muted-foreground);
+  }
+
+  .features {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .feature-card {
+    padding: 24px;
+    gap: 20px;
+  }
+
+  .feature-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .feature-icon iconify-icon {
+    font-size: 26px;
+  }
+
+  .feature-label {
+    font-size: 17px;
+  }
+
+  .install-section {
+    padding: 48px 40px;
+  }
+
+  .install-button {
+    max-width: 400px;
+    padding: 18px 48px;
+    font-size: 18px;
+  }
+
+  .benefits {
+    max-width: 1000px;
+    margin: 32px auto;
+    padding: 56px 40px;
+    border-radius: var(--radius-xl);
+  }
+
+  .benefits-title {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+
+  .benefits-list {
+    max-width: 600px;
+    margin: 0 auto;
+    gap: 20px;
+  }
+
+  .benefit-item {
+    font-size: 17px;
+    padding: 12px 0;
+  }
+
+  .check-icon iconify-icon {
+    font-size: 24px;
+  }
+
+  .page-footer {
+    padding: 48px 40px;
+    gap: 32px;
+  }
+
+  .footer-link {
+    font-size: 15px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .footer-link:hover {
+    color: var(--primary)px;
     margin: 0 auto;
   }
 }
