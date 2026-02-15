@@ -10,12 +10,10 @@ import SpendingPage from './pages/SpendingPage';
 import PriceComparisonPage from './pages/PriceComparisonPage';
 import VisualAnalyticsPage from './pages/VisualAnalyticsPage';
 import AIAssistantPage from './pages/AIAssistantPage';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
-  // Check if user is logged in
-  const isAuthenticated = !!localStorage.getItem('userId');
-
   return (
     <Router>
       <Routes>
@@ -27,35 +25,67 @@ function App() {
         {/* Protected Routes */}
         <Route
           path="/dashboard"
-          element={isAuthenticated ? <HomeDashboard /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <HomeDashboard />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/add-expense"
-          element={isAuthenticated ? <AddExpensePage /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <AddExpensePage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/set-budget"
-          element={isAuthenticated ? <SetBudgetPage /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <SetBudgetPage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/savings-goals"
-          element={isAuthenticated ? <SavingsGoalsPage /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <SavingsGoalsPage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/spending"
-          element={isAuthenticated ? <SpendingPage /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <SpendingPage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/price-comparison"
-          element={isAuthenticated ? <PriceComparisonPage /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <PriceComparisonPage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/analytics"
-          element={isAuthenticated ? <VisualAnalyticsPage /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <VisualAnalyticsPage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/ai-assistant"
-          element={isAuthenticated ? <AIAssistantPage /> : <Navigate to="/login" />}
+          element={
+            <ProtectedRoute>
+              <AIAssistantPage />
+            </ProtectedRoute>
+          }
         />
 
         {/* Catch-all route */}

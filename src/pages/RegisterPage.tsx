@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthenticationManager } from '../services/AuthenticationManager';
 import { FormValidator } from '../services/FormValidator';
@@ -19,6 +19,13 @@ const RegisterPage: React.FC = () => {
   // OOP: Initialize service classes
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [formValidator] = useState(() => FormValidator.getInstance());
+
+  // Check if already logged in
+  useEffect(() => {
+    if (authManager.isAuthenticated()) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [authManager, navigate]);
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));

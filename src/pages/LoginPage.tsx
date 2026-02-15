@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthenticationManager } from '../services/AuthenticationManager';
 import { FormValidator } from '../services/FormValidator';
@@ -14,6 +14,13 @@ const LoginPage: React.FC = () => {
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [formValidator] = useState(() => FormValidator.getInstance());
 
+  // Check if already logged in
+  useEffect(() => {
+    if (authManager.isAuthenticated()) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [authManager, navigate]);
+
   const handleLogin = async () => {
     // OOP: Use FormValidator to validate login form
     const validation = formValidator.validateLoginForm(username, password);
@@ -26,7 +33,7 @@ const LoginPage: React.FC = () => {
     const result = await authManager.login(username, password);
     
     if (result.success) {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     } else {
       alert(result.message);
     }
