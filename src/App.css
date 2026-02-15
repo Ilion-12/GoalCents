@@ -5,3 +5,69 @@
   display: flex;
   flex-direction: column;
 }
+
+/* User Profile Dropdown Styles */
+.user-profile-container {
+  position: relative;
+}
+
+.user-profile {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.user-profile:hover {
+  opacity: 0.8;
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #ef4444;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 120px;
+  z-index: 1000;
+  animation: dropdownSlide 0.2s ease-out;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logout-button {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+  border-radius: 8px;
+}
+
+.logout-button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.logout-button iconify-icon {
+  font-size: 18px;
+}
+
+.logout-button span {
+  flex: 1;
+  text-align: left;
+}
