@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { supabase } from '../dataBase/supabase';
+import { AuthenticationManager } from '../services/AuthenticationManager';
+import { FormValidator } from '../services/FormValidator';
 import type { Budget } from '../types';
 import '../styles/setBudgetPage.css';
 
@@ -12,7 +14,10 @@ const SetBudgetPage: React.FC = () => {
     timeframe: 'week'
   });
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<string>('');
+  
+  // OOP: Initialize service classes
+  const [authManager] = useState(() => AuthenticationManager.getInstance());
+  const [formValidator] = useState(() => FormValidator.getInstance());
 
   useEffect(() => {
     fetchUserAndBudget();
@@ -20,15 +25,14 @@ const SetBudgetPage: React.FC = () => {
 
   const fetchUserAndBudget = async () => {
     try {
-      // Get user data from localStorage
-      const userId = localStorage.getItem('userId');
+      // OOP: Use AuthenticationManager to get current user
+      const userId = authManager.getCurrentUserId();
       
       if (!userId) {
         console.error('No user logged in');
         navigate('/login');
         return;
       }
-      setUserId(userId);
 
       // Fetch existing active budget
       const { data, error } = await supabase
@@ -52,17 +56,19 @@ const SetBudgetPage: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!budget.amount || budget.amount <= 0) {
-      alert('Please enter a valid budget amount');
+    // OOP: Use FormValidator to validate budget form
+    const validation = formValidator.validateBudgetForm(budget.amount || 0);
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
     setLoading(true);
     try {
-      // Get current user ID from localStorage if not already set
-      const currentUserId = userId || localStorage.getItem('userId');
+      // OOP: Use AuthenticationManager to get current user
+      const userId = authManager.getCurrentUserId();
       
-      if (!currentUserId) {
+      if (!userId) {
         alert('Please login first');
         navigate('/login');
         return;
@@ -72,13 +78,13 @@ const SetBudgetPage: React.FC = () => {
       await supabase
         .from('budgets')
         .update({ is_active: false })
-        .eq('user_id', currentUserId);
+        .eq('user_id', userId);
 
       // Insert new budget
       const { data, error } = await supabase
         .from('budgets')
         .insert([{
-          user_id: currentUserId,
+          user_id: userId,
           amount: budget.amount,
           timeframe: budget.timeframe,
           is_active: true

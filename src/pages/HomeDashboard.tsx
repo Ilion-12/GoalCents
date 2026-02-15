@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import Header from '../components/Header';
 import { supabase } from '../dataBase/supabase';
-import type { BudgetSummary, SavingsGoal } from '../types';
+import { AuthenticationManager } from '../services/AuthenticationManager';
+import { BudgetCalculator } from '../services/BudgetCalculator';
+import { ExpenseManager } from '../services/ExpenseManager';
+import { SavingsGoalManager } from '../services/SavingsGoalManager';
+import type { BudgetSummary, SavingsGoal, Expense } from '../types';
 import '../styles/homeDashboard.css';
 
 const HomeDashboard: React.FC = () => {
@@ -19,6 +23,12 @@ const HomeDashboard: React.FC = () => {
   const [savingsGoal, setSavingsGoal] = useState<SavingsGoal | null>(null);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('User');
+  
+  // OOP: Initialize service classes
+  const [authManager] = useState(() => AuthenticationManager.getInstance());
+  const [budgetCalculator] = useState(() => BudgetCalculator.getInstance());
+  const [expenseManager] = useState(() => ExpenseManager.getInstance());
+  const [savingsGoalManager] = useState(() => SavingsGoalManager.getInstance());
 
   useEffect(() => {
     fetchDashboardData();
@@ -26,29 +36,23 @@ const HomeDashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      // Get user data from localStorage
-      const userId = localStorage.getItem('userId');
-      const fullName = localStorage.getItem('fullName');
-      const username = localStorage.getItem('username');
+      // OOP: Use AuthenticationManager to get current user
+      const user = authManager.getCurrentUser();
       
-      if (!userId) {
+      if (!user) {
         console.error('No user logged in');
         navigate('/login');
         return;
       }
       
       // Set user name
-      if (fullName) {
-        setUserName(fullName);
-      } else if (username) {
-        setUserName(username);
-      }
+      setUserName(user.fullName || user.username || 'User');
 
       // Fetch active budget
       const { data: budgetData, error: budgetError } = await supabase
         .from('budgets')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', user.id)
         .eq('is_active', true)
         .single();
 
@@ -56,67 +60,20 @@ const HomeDashboard: React.FC = () => {
         console.error('Error fetching budget:', budgetError);
       }
 
-      // Fetch all expenses
-      const { data: expensesData, error: expensesError } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('user_id', userId);
+      // OOP: Use ExpenseManager to fetch all expenses
+      const expensesResult = await expenseManager.getAllExpenses(user.id);
+      const expenses: Expense[] = expensesResult.data || [];
 
-      if (expensesError) {
-        console.error('Error fetching expenses:', expensesError);
+      // OOP: Use SavingsGoalManager to fetch savings goal
+      const goalResult = await savingsGoalManager.getLatestGoal(user.id);
+      if (goalResult.success && goalResult.data) {
+        setSavingsGoal(goalResult.data);
       }
 
-      // Fetch savings goal
-      const { data: goalData, error: goalError } = await supabase
-        .from('savings_goal')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (goalError && goalError.code !== 'PGRST116') {
-        console.error('Error fetching goal:', goalError);
-      }
-
-      // Calculate totals
-      let totalSpent = 0;
-      let weeklySpent = 0;
-      let monthlySpent = 0;
-
-      const now = new Date();
-      const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-
-      if (expensesData) {
-        expensesData.forEach(expense => {
-          const expenseDate = new Date(expense.expense_date);
-          totalSpent += expense.amount;
-          
-          if (expenseDate >= oneWeekAgo) {
-            weeklySpent += expense.amount;
-          }
-          
-          if (expenseDate >= oneMonthAgo) {
-            monthlySpent += expense.amount;
-          }
-        });
-      }
-
+      // OOP: Use BudgetCalculator to generate budget summary
       const totalBudget = budgetData?.amount || 0;
-      const remaining = totalBudget - totalSpent;
-
-      setSummary({
-        totalBudget,
-        totalSpent,
-        remaining,
-        weeklySpent,
-        monthlySpent
-      });
-
-      if (goalData) {
-        setSavingsGoal(goalData);
-      }
+      const budgetSummary = budgetCalculator.generateBudgetSummary(totalBudget, expenses);
+      setSummary(budgetSummary);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -128,8 +85,14 @@ const HomeDashboard: React.FC = () => {
     navigate(path);
   };
 
-  const budgetPercentage = summary.totalBudget > 0 ? (summary.totalSpent / summary.totalBudget) * 100 : 0;
-  const savingsProgress = savingsGoal ? Math.round((savingsGoal.current_amount / savingsGoal.target_amount) * 100) : 0;
+  // OOP: Use BudgetCalculator to calculate budget percentage
+  const budgetPercentage = budgetCalculator.calculateBudgetPercentage(summary.totalSpent, summary.totalBudget);
+  
+  // OOP: Use SavingsGoalManager to calculate savings progress
+  const savingsProgress = savingsGoal ? savingsGoalManager.calculateProgress(savingsGoal).percentage : 0;
+  
+  // OOP: Use BudgetCalculator to generate budget alert
+  const budgetAlert = budgetCalculator.generateBudgetAlert(budgetPercentage);
 
   if (loading) {
     return (
@@ -183,15 +146,15 @@ const HomeDashboard: React.FC = () => {
         </div>
 
         {/* Alert */}
-        {budgetPercentage >= 80 && (
+        {budgetAlert && (
           <div className="warning-box">
             <div className="warning-icon">
               <iconify-icon icon="lucide:triangle-alert"></iconify-icon>
             </div>
             <div className="warning-text">
-              <h3 className="warning-title">Budget Alert</h3>
+              <h3 className="warning-title">{budgetAlert.title}</h3>
               <p className="warning-message">
-                You've spent {Math.round(budgetPercentage)}% of your budget. {budgetPercentage >= 100 ? 'Budget exceeded!' : 'Try to reduce non-essential expenses.'}
+                {budgetAlert.message}
               </p>
             </div>
           </div>

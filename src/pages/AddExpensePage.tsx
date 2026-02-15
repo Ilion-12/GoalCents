@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { supabase } from '../dataBase/supabase';
+import { AuthenticationManager } from '../services/AuthenticationManager';
+import { FormValidator } from '../services/FormValidator';
+import { ExpenseManager } from '../services/ExpenseManager';
 import type { Expense } from '../types';
 import '../styles/addExpenesePage.css';
 
@@ -15,76 +17,61 @@ const AddExpensePage: React.FC = () => {
     is_essential: true
   });
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<string>('');
+  
+  // OOP: Initialize service classes
+  const [authManager] = useState(() => AuthenticationManager.getInstance());
+  const [formValidator] = useState(() => FormValidator.getInstance());
+  const [expenseManager] = useState(() => ExpenseManager.getInstance());
 
   useEffect(() => {
     fetchUser();
   }, []);
 
   const fetchUser = async () => {
-    try {
-      // Get user data from localStorage
-      const userId = localStorage.getItem('userId');
-      
-      if (!userId) {
-        console.error('No user logged in');
-        navigate('/login');
-        return;
-      }
-      
-      setUserId(userId);
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      navigate('/login');
-    }
+    // OOP: Use AuthenticationManager to check if user is authenticated
+    authManager.requireAuth(navigate);
   };
 
   const handleSave = async () => {
-    if (!expense.amount || expense.amount <= 0) {
-      alert('Please enter a valid amount');
-      return;
-    }
+    // OOP: Use FormValidator to validate expense form
+    const validation = formValidator.validateExpenseForm(
+      expense.amount || 0,
+      expense.description || '',
+      expense.expense_date || ''
+    );
 
-    if (!expense.description || expense.description.trim() === '') {
-      alert('Please enter a description');
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
     setLoading(true);
     try {
-      const currentUserId = userId || localStorage.getItem('userId');
+      // OOP: Use AuthenticationManager to get current user
+      const userId = authManager.getCurrentUserId();
       
-      if (!currentUserId) {
+      if (!userId) {
         alert('Please login first');
         navigate('/login');
         return;
       }
       
-      const { data, error } = await supabase
-        .from('expenses')
-        .insert([{
-          user_id: currentUserId,
-          amount: expense.amount,
-          category: expense.category,
-          description: expense.description,
-          expense_date: expense.expense_date,
-          is_essential: expense.is_essential
-        }])
-        .select();
+      // OOP: Use ExpenseManager to create expense
+      const result = await expenseManager.createExpense({
+        user_id: userId,
+        amount: expense.amount || 0,
+        category: expense.category || 'Other',
+        description: expense.description || '',
+        expense_date: expense.expense_date || expenseManager.getCurrentDateString(),
+        is_essential: expense.is_essential || false
+      });
 
-      if (error) {
-        console.error('Detailed error:', error);
-        if (error.message) {
-          alert(`Error: ${error.message}. Please check SUPABASE_FIX.sql if you see RLS errors.`);
-        } else {
-          throw error;
-        }
-        setLoading(false);
-        return;
+      if (result.success) {
+        console.log('Expense saved successfully:', result.data);
+        navigate('/dashboard');
+      } else {
+        alert(result.message);
       }
-
-      console.log('Expense saved successfully:', data);
-      navigate('/dashboard');
     } catch (error) {
       console.error('Error saving expense:', error);
       alert('Failed to save expense. Please try again.');

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../dataBase/supabase';
+import { AuthenticationManager } from '../services/AuthenticationManager';
+import { FormValidator } from '../services/FormValidator';
 import '../styles/signinPage.css';
 
 const RegisterPage: React.FC = () => {
@@ -14,62 +15,43 @@ const RegisterPage: React.FC = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  // OOP: Initialize service classes
+  const [authManager] = useState(() => AuthenticationManager.getInstance());
+  const [formValidator] = useState(() => FormValidator.getInstance());
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleRegister = async () => {
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+    // OOP: Use FormValidator to validate registration form
+    const validation = formValidator.validateRegistrationForm(
+      formData.fullName,
+      formData.email,
+      formData.username,
+      formData.password,
+      formData.confirmPassword
+    );
+
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
-    if (!formData.fullName || !formData.email || !formData.username || !formData.password) {
-      alert('Please fill in all fields!');
-      return;
-    }
+    // OOP: Use AuthenticationManager to handle registration
+    const result = await authManager.register(
+      formData.fullName,
+      formData.email,
+      formData.username,
+      formData.password
+    );
 
-    try {
-      // Check if username or email already exists
-      const { data: existingUser } = await supabase
-        .from('users')
-        .select('username, email')
-        .or(`username.eq.${formData.username},email.eq.${formData.email}`);
-
-      if (existingUser && existingUser.length > 0) {
-        if (existingUser.some(user => user.username === formData.username)) {
-          alert('Username already exists!');
-        } else {
-          alert('Email already exists!');
-        }
-        return;
-      }
-
-      // Insert new user
-      const { error } = await supabase
-        .from('users')
-        .insert([
-          {
-            full_name: formData.fullName,
-            email: formData.email,
-            username: formData.username,
-            password: formData.password
-          }
-        ])
-        .select();
-
-      if (error) {
-        console.error('Registration error:', error);
-        alert('Registration failed: ' + error.message);
-        return;
-      }
-
-      alert('Registration successful! Please login.');
+    if (result.success) {
+      alert(result.message);
       navigate('/login');
-    } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred during registration.');
+    } else {
+      alert(result.message);
     }
   };
 

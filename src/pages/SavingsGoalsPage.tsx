@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import { supabase } from '../dataBase/supabase';
+import { AuthenticationManager } from '../services/AuthenticationManager';
+import { FormValidator } from '../services/FormValidator';
+import { SavingsGoalManager } from '../services/SavingsGoalManager';
 import type { SavingsGoal } from '../types';
 import '../styles/savingGoalsPage.css';
 
@@ -15,6 +17,11 @@ const SavingsGoalsPage: React.FC = () => {
     target_amount: 0,
     current_amount: 0
   });
+  
+  // OOP: Initialize service classes
+  const [authManager] = useState(() => AuthenticationManager.getInstance());
+  const [formValidator] = useState(() => FormValidator.getInstance());
+  const [savingsGoalManager] = useState(() => SavingsGoalManager.getInstance());
 
   useEffect(() => {
     fetchSavingsGoal();
@@ -22,53 +29,24 @@ const SavingsGoalsPage: React.FC = () => {
 
   const fetchSavingsGoal = async () => {
     try {
-      // Get user data from localStorage
-      const currentUserId = localStorage.getItem('userId');
+      // OOP: Use AuthenticationManager to get current user
+      const userId = authManager.getCurrentUserId();
       
-      if (!currentUserId) {
+      if (!userId) {
         console.error('No user logged in');
         navigate('/login');
         return;
       }
 
-      const { data, error } = await supabase
-        .from('savings_goal')
-        .select('*')
-        .eq('user_id', currentUserId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+      // OOP: Use SavingsGoalManager to get or create default goal
+      const result = await savingsGoalManager.getOrCreateDefaultGoal(userId);
 
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      if (data) {
-        setGoal(data);
+      if (result.success && result.data) {
+        setGoal(result.data);
         setEditValues({
-          goal_name: data.goal_name,
-          target_amount: data.target_amount,
-          current_amount: data.current_amount
-        });
-      } else {
-        // Create a default goal if none exists
-        const { data: newGoal, error: insertError } = await supabase
-          .from('savings_goal')
-          .insert([{
-            user_id: currentUserId,
-            goal_name: 'New Phone',
-            target_amount: 15000,
-            current_amount: 9000
-          }])
-          .select()
-          .single();
-
-        if (insertError) throw insertError;
-        setGoal(newGoal);
-        setEditValues({
-          goal_name: newGoal.goal_name,
-          target_amount: newGoal.target_amount,
-          current_amount: newGoal.current_amount
+          goal_name: result.data.goal_name,
+          target_amount: result.data.target_amount,
+          current_amount: result.data.current_amount
         });
       }
     } catch (error) {
@@ -85,23 +63,34 @@ const SavingsGoalsPage: React.FC = () => {
   const handleSaveEdit = async () => {
     if (!goal) return;
 
+    // OOP: Use FormValidator to validate savings goal form
+    const validation = formValidator.validateSavingsGoalForm(
+      editValues.goal_name,
+      editValues.target_amount,
+      editValues.current_amount
+    );
+
+    if (!validation.isValid) {
+      alert(validation.message);
+      return;
+    }
+
     try {
-      const { data, error } = await supabase
-        .from('savings_goal')
-        .update({
-          goal_name: editValues.goal_name,
-          target_amount: editValues.target_amount,
-          current_amount: editValues.current_amount
-        })
-        .eq('id', goal.id)
-        .select()
-        .single();
+      // OOP: Use SavingsGoalManager to update goal
+      const result = await savingsGoalManager.updateGoal(goal.id, {
+        goal_name: editValues.goal_name,
+        target_amount: editValues.target_amount,
+        current_amount: editValues.current_amount,
+        user_id: goal.user_id
+      });
 
-      if (error) throw error;
-
-      setGoal(data);
-      setIsEditing(false);
-      alert('Goal updated successfully!');
+      if (result.success && result.data) {
+        setGoal(result.data);
+        setIsEditing(false);
+        alert(result.message);
+      } else {
+        alert(result.message);
+      }
     } catch (error) {
       console.error('Error updating goal:', error);
       alert('Failed to update goal. Please try again.');
@@ -115,18 +104,16 @@ const SavingsGoalsPage: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      const { data, error } = await supabase
-        .from('savings_goal')
-        .update({ current_amount: 0 })
-        .eq('id', goal.id)
-        .select()
-        .single();
+      // OOP: Use SavingsGoalManager to reset goal
+      const result = await savingsGoalManager.resetGoal(goal.id);
 
-      if (error) throw error;
-
-      setGoal(data);
-      setEditValues({ ...editValues, current_amount: 0 });
-      alert('Goal reset successfully!');
+      if (result.success && result.data) {
+        setGoal(result.data);
+        setEditValues({ ...editValues, current_amount: 0 });
+        alert(result.message);
+      } else {
+        alert(result.message);
+      }
     } catch (error) {
       console.error('Error resetting goal:', error);
       alert('Failed to reset goal. Please try again.');
@@ -155,8 +142,10 @@ const SavingsGoalsPage: React.FC = () => {
     );
   }
 
-  const progressPercent = Math.round((goal.current_amount / goal.target_amount) * 100);
-  const remaining = goal.target_amount - goal.current_amount;
+  // OOP: Use SavingsGoalManager to calculate progress
+  const goalProgress = savingsGoalManager.calculateProgress(goal);
+  const progressPercent = goalProgress.percentage;
+  const remaining = goalProgress.remaining;
 
   const handleBack = () => {
     navigate(-1);

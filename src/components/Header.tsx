@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthenticationManager } from '../services/AuthenticationManager';
 
 interface HeaderProps {
   title: string;
@@ -46,6 +47,7 @@ const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [menuManager] = React.useState(() => new UserProfileMenuManager(setIsDropdownOpen));
+  const [authManager] = React.useState(() => AuthenticationManager.getInstance());
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -66,11 +68,8 @@ const Header: React.FC<HeaderProps> = ({
   }, [isDropdownOpen, menuManager]);
 
   const handleLogout = () => {
-    // Clear localStorage
-    localStorage.removeItem('userId');
-    localStorage.removeItem('fullName');
-    localStorage.removeItem('username');
-    localStorage.removeItem('email');
+    // OOP: Use AuthenticationManager to logout
+    authManager.logout();
     
     // Navigate to login page
     navigate('/login');

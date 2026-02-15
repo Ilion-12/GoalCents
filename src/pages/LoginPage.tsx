@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../dataBase/supabase';
+import { AuthenticationManager } from '../services/AuthenticationManager';
+import { FormValidator } from '../services/FormValidator';
 import '../styles/loginPage.css';
 
 const LoginPage: React.FC = () => {
@@ -8,42 +9,26 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  
+  // OOP: Initialize service classes
+  const [authManager] = useState(() => AuthenticationManager.getInstance());
+  const [formValidator] = useState(() => FormValidator.getInstance());
 
   const handleLogin = async () => {
-    if (!username || !password) {
-      alert('Please enter username and password!');
+    // OOP: Use FormValidator to validate login form
+    const validation = formValidator.validateLoginForm(username, password);
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
     }
 
-    try {
-      
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .single();
-
-      if (error || !data) {
-        alert('Invalid username or password!');
-        return;
-      }
-
-     
-      if (data.password !== password) {
-        alert('Invalid username or password!');
-        return;
-      }
-
-      localStorage.setItem('userId', data.id);
-      localStorage.setItem('username', data.username);
-      localStorage.setItem('fullName', data.full_name);
-      localStorage.setItem('email', data.email);
-
-      // Navigate to dashboard
+    // OOP: Use AuthenticationManager to handle login
+    const result = await authManager.login(username, password);
+    
+    if (result.success) {
       navigate('/dashboard');
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('An error occurred during login.');
+    } else {
+      alert(result.message);
     }
   };
 
