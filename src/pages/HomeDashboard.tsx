@@ -5,7 +5,6 @@ import Header from '../components/Header';
 import { supabase } from '../dataBase/supabase';
 import { AuthenticationManager } from '../services/AuthenticationManager';
 import { BudgetCalculator } from '../services/BudgetCalculator';
-import { ExpenseManager } from '../services/ExpenseManager';
 import { SavingsGoalManager } from '../services/SavingsGoalManager';
 import type { BudgetSummary, SavingsGoal, Expense } from '../types';
 import '../styles/homeDashboard.css';
@@ -27,7 +26,6 @@ const HomeDashboard: React.FC = () => {
   // OOP: Initialize service classes
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [budgetCalculator] = useState(() => BudgetCalculator.getInstance());
-  const [expenseManager] = useState(() => ExpenseManager.getInstance());
   const [savingsGoalManager] = useState(() => SavingsGoalManager.getInstance());
 
   useEffect(() => {
@@ -48,11 +46,57 @@ const HomeDashboard: React.FC = () => {
       // Set user name
       setUserName(user.fullName || user.username || 'User');
 
-      // 🔥 Process finished budgets and transfer leftover to savings
+      // Process finished budgets and transfer leftover to savings
       try {
-        await supabase.rpc('process_finished_budgets', {
+        console.log('Checking for finished budgets to process...');
+        
+        // First, let's see what budgets exist
+        const { data: allBudgets } = await supabase
+          .from('budgets')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        console.log('All budgets:', allBudgets);
+        
+        // Check for finished budgets
+        const finishedBudgets = allBudgets?.filter(b => 
+          b.end_date && new Date(b.end_date) < new Date() && !b.processed
+        );
+        console.log('Finished unprocessed budgets:', finishedBudgets);
+        
+        // Debug: Check expenses for each finished budget
+        if (finishedBudgets && finishedBudgets.length > 0) {
+          for (const budget of finishedBudgets) {
+            const { data: budgetExpenses } = await supabase
+              .from('expenses')
+              .select('*')
+              .eq('budget_id', budget.id);
+            
+            const totalExpenses = budgetExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+            const remaining = budget.amount - totalExpenses;
+            
+            console.log(`Budget ${budget.id}:`, {
+              budgetAmount: budget.amount,
+              totalExpenses,
+              remaining,
+              goalId: budget.goal_id,
+              expensesCount: budgetExpenses?.length || 0,
+              expenses: budgetExpenses
+            });
+          }
+        }
+        
+        // Now call the function
+        const { data, error } = await supabase.rpc('process_finished_budgets', {
           p_user_id: user.id
         });
+        
+        if (error) {
+          console.error('RPC Error:', error);
+        } else {
+          console.log('✅ Process finished budgets completed:', data);
+        }
       } catch (rpcError) {
         console.error('Error processing finished budgets:', rpcError);
         // Don't block dashboard load if this fails
@@ -70,9 +114,20 @@ const HomeDashboard: React.FC = () => {
         console.error('Error fetching budget:', budgetError);
       }
 
-      // OOP: Use ExpenseManager to fetch all expenses
-      const expensesResult = await expenseManager.getAllExpenses(user.id);
-      const expenses: Expense[] = expensesResult.data || [];
+      // Fetch expenses ONLY for the active budget
+      let expenses: Expense[] = [];
+      if (budgetData) {
+        const { data: budgetExpenses } = await supabase
+          .from('expenses')
+          .select('*')
+          .eq('budget_id', budgetData.id)
+          .order('expense_date', { ascending: false });
+        
+        expenses = budgetExpenses || [];
+        console.log(`💸 Found ${expenses.length} expenses for active budget`);
+      } else {
+        console.log('📭 No active budget - showing zero expenses');
+      }
 
       // OOP: Use SavingsGoalManager to fetch savings goal
       const goalResult = await savingsGoalManager.getLatestGoal(user.id);

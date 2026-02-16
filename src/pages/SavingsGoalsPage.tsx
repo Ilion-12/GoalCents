@@ -185,7 +185,8 @@ const SavingsGoalsPage: React.FC = () => {
                 <input
                   type="number"
                   value={editValues.target_amount}
-                  onChange={(e) => setEditValues({ ...editValues, target_amount: parseFloat(e.target.value) })}
+                  onChange={(e) => setEditValues({ ...editValues, target_amount: parseFloat(e.target.value) || 0 })}
+                  onFocus={(e) => e.target.select()}
                   className="stat-value"
                   style={{ border: '1px solid var(--border)', padding: '4px 8px', borderRadius: '4px', width: '100%' }}
                 />
@@ -199,7 +200,8 @@ const SavingsGoalsPage: React.FC = () => {
                 <input
                   type="number"
                   value={editValues.current_amount}
-                  onChange={(e) => setEditValues({ ...editValues, current_amount: parseFloat(e.target.value) })}
+                  onChange={(e) => setEditValues({ ...editValues, current_amount: parseFloat(e.target.value) || 0 })}
+                  onFocus={(e) => e.target.select()}
                   className="stat-value saved"
                   style={{ border: '1px solid var(--border)', padding: '4px 8px', borderRadius: '4px', width: '100%' }}
                 />

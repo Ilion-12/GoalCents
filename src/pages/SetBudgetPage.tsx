@@ -75,13 +75,18 @@ const SetBudgetPage: React.FC = () => {
       }
 
       // Fetch user's latest savings goal
-      const { data: goalData } = await supabase
+      const { data: goalData, error: goalError } = await supabase
         .from('savings_goal')
         .select('id')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
+
+      console.log('Savings goal found:', goalData);
+      if (goalError) {
+        console.warn('No savings goal found:', goalError.message);
+      }
 
       // Calculate start and end dates
       const startDate = new Date();
@@ -93,6 +98,19 @@ const SetBudgetPage: React.FC = () => {
         endDate.setMonth(endDate.getMonth() + 1);
       }
 
+      const budgetData = {
+        user_id: userId,
+        amount: budget.amount,
+        timeframe: budget.timeframe,
+        is_active: true,
+        start_date: startDate.toISOString().split('T')[0],
+        end_date: endDate.toISOString().split('T')[0],
+        processed: false,
+        goal_id: goalData?.id || null
+      };
+
+      console.log('📊 Creating budget with data:', budgetData);
+
       // Deactivate all existing budgets
       await supabase
         .from('budgets')
@@ -102,16 +120,7 @@ const SetBudgetPage: React.FC = () => {
       // Insert new budget with all required fields
       const { data, error } = await supabase
         .from('budgets')
-        .insert([{
-          user_id: userId,
-          amount: budget.amount,
-          timeframe: budget.timeframe,
-          is_active: true,
-          start_date: startDate.toISOString().split('T')[0],
-          end_date: endDate.toISOString().split('T')[0],
-          processed: false,
-          goal_id: goalData?.id || null
-        }])
+        .insert([budgetData])
         .select();
 
       if (error) {
@@ -174,8 +183,9 @@ const SetBudgetPage: React.FC = () => {
             <span className="currency-symbol">₱</span>
             <input
               type="number"
-              value={budget.amount || 0}
-              onChange={(e) => setBudget({ ...budget, amount: parseFloat(e.target.value) })}
+              value={budget.amount || ''}
+              onChange={(e) => setBudget({ ...budget, amount: parseFloat(e.target.value) || 0 })}
+              onFocus={(e) => e.target.select()}
               placeholder="0.00"
             />
           </div>

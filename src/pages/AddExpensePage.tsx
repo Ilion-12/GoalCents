@@ -96,8 +96,9 @@ const AddExpensePage: React.FC = () => {
             <input
               type="number"
               className="amount-text"
-              value={expense.amount || 0}
-              onChange={(e) => setExpense({ ...expense, amount: parseFloat(e.target.value) })}
+              value={expense.amount || ''}
+              onChange={(e) => setExpense({ ...expense, amount: parseFloat(e.target.value) || 0 })}
+              onFocus={(e) => e.target.select()}
               placeholder="₱0.00"
             />
           </div>

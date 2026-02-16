@@ -3,6 +3,7 @@ import type { Expense } from '../types';
 
 export interface CreateExpenseData {
   user_id: string;
+  budget_id?: string;
   amount: number;
   category: string;
   description: string;
@@ -38,9 +39,28 @@ export class ExpenseManager {
   // Create a new expense
   public async createExpense(expenseData: CreateExpenseData): Promise<ExpenseResult> {
     try {
+      // Automatically link expense to active budget if not provided
+      const finalExpenseData = { ...expenseData };
+      
+      if (!finalExpenseData.budget_id) {
+        const { data: activeBudget } = await supabase
+          .from('budgets')
+          .select('id')
+          .eq('user_id', expenseData.user_id)
+          .eq('is_active', true)
+          .single();
+        
+        if (activeBudget) {
+          finalExpenseData.budget_id = activeBudget.id;
+          console.log('🔗 Linked expense to budget:', activeBudget.id);
+        } else {
+          console.warn('⚠️ No active budget found - expense will not be linked');
+        }
+      }
+
       const { data, error } = await supabase
         .from('expenses')
-        .insert([expenseData])
+        .insert([finalExpenseData])
         .select()
         .single();
 

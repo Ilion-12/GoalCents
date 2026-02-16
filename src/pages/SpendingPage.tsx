@@ -33,11 +33,29 @@ const SpendingPage: React.FC = () => {
         return;
       }
 
-      // Fetch all expenses
+      // First, fetch the active budget
+      const { data: activeBudget } = await supabase
+        .from('budgets')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('is_active', true)
+        .single();
+
+      if (!activeBudget) {
+        console.log('No active budget - showing no expenses');
+        setEssentialExpenses([]);
+        setNonEssentialExpenses([]);
+        setEssentialTotal(0);
+        setNonEssentialTotal(0);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch expenses only for the active budget
       const { data: expensesData, error } = await supabase
         .from('expenses')
         .select('*')
-        .eq('user_id', userId)
+        .eq('budget_id', activeBudget.id)
         .order('expense_date', { ascending: false });
 
       if (error) {

@@ -105,7 +105,7 @@ const VisualAnalyticsPage: React.FC = () => {
         return;
       }
 
-      // Fetch budget
+      // Fetch active budget
       const { data: budgetData } = await supabase
         .from('budgets')
         .select('*')
@@ -113,16 +113,26 @@ const VisualAnalyticsPage: React.FC = () => {
         .eq('is_active', true)
         .single();
 
-      // Fetch expenses
-      const { data: expensesData } = await supabase
+      // Fetch ALL expenses for trends (historical comparison)
+      const { data: allExpensesData } = await supabase
         .from('expenses')
         .select('*')
         .eq('user_id', userId)
         .order('expense_date', { ascending: false });
 
-      if (expensesData) {
-        setAllExpenses(expensesData);
+      // Fetch expenses for current budget only (for spending breakdown)
+      let currentBudgetExpenses: Expense[] = [];
+      if (budgetData) {
+        const { data } = await supabase
+          .from('expenses')
+          .select('*')
+          .eq('budget_id', budgetData.id)
+          .order('expense_date', { ascending: false });
+        currentBudgetExpenses = data || [];
       }
+
+      // Set all expenses for trends
+      setAllExpenses(allExpensesData || []);
 
       // Fetch savings goal
       const { data: goalData } = await supabase
@@ -133,13 +143,13 @@ const VisualAnalyticsPage: React.FC = () => {
         .limit(1)
         .single();
 
-      // Process data
-      if (expensesData) {
+      // Process data using CURRENT BUDGET expenses only
+      if (currentBudgetExpenses.length > 0) {
         // Calculate spending by category
         const categoryMap = new Map<string, { amount: number; isEssential: boolean }>();
         let totalSpent = 0;
 
-        expensesData.forEach(expense => {
+        currentBudgetExpenses.forEach(expense => {
           const category = expense.category || 'Others';
           const current = categoryMap.get(category) || { amount: 0, isEssential: expense.is_essential };
           current.amount += expense.amount;
@@ -178,7 +188,7 @@ const VisualAnalyticsPage: React.FC = () => {
           });
         }
 
-        const essentialSpent = expensesData
+        const essentialSpent = currentBudgetExpenses
           .filter(e => !e.is_essential)
           .reduce((sum, e) => sum + e.amount, 0);
         
@@ -201,6 +211,16 @@ const VisualAnalyticsPage: React.FC = () => {
         }
 
         setAlerts(newAlerts);
+      } else {
+        // No active budget - reset current budget data but keep trends
+        setCategories([]);
+        setBudget({
+          total: 0,
+          spent: 0,
+          remaining: 0,
+          percentage: 0
+        });
+        setAlerts([]);
       }
 
       if (goalData) {
