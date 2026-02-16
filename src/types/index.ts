@@ -18,6 +18,10 @@ export interface Budget {
   timeframe: 'week' | 'month';
   is_active: boolean;
   created_at: string;
+  start_date: string;
+  end_date: string;
+  processed: boolean;
+  goal_id: string | null;
 }
 
 export interface Expense {

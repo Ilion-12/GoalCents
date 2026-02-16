@@ -74,20 +74,43 @@ const SetBudgetPage: React.FC = () => {
         return;
       }
 
+      // Fetch user's latest savings goal
+      const { data: goalData } = await supabase
+        .from('savings_goal')
+        .select('id')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      // Calculate start and end dates
+      const startDate = new Date();
+      const endDate = new Date();
+      
+      if (budget.timeframe === 'week') {
+        endDate.setDate(endDate.getDate() + 7);
+      } else {
+        endDate.setMonth(endDate.getMonth() + 1);
+      }
+
       // Deactivate all existing budgets
       await supabase
         .from('budgets')
         .update({ is_active: false })
         .eq('user_id', userId);
 
-      // Insert new budget
+      // Insert new budget with all required fields
       const { data, error } = await supabase
         .from('budgets')
         .insert([{
           user_id: userId,
           amount: budget.amount,
           timeframe: budget.timeframe,
-          is_active: true
+          is_active: true,
+          start_date: startDate.toISOString().split('T')[0],
+          end_date: endDate.toISOString().split('T')[0],
+          processed: false,
+          goal_id: goalData?.id || null
         }])
         .select();
 
