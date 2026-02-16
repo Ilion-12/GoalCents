@@ -48,6 +48,16 @@ const HomeDashboard: React.FC = () => {
       // Set user name
       setUserName(user.fullName || user.username || 'User');
 
+      // 🔥 Process finished budgets and transfer leftover to savings
+      try {
+        await supabase.rpc('process_finished_budgets', {
+          p_user_id: user.id
+        });
+      } catch (rpcError) {
+        console.error('Error processing finished budgets:', rpcError);
+        // Don't block dashboard load if this fails
+      }
+
       // Fetch active budget
       const { data: budgetData, error: budgetError } = await supabase
         .from('budgets')
