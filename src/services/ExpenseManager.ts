@@ -52,9 +52,9 @@ export class ExpenseManager {
         
         if (activeBudget) {
           finalExpenseData.budget_id = activeBudget.id;
-          console.log('🔗 Linked expense to budget:', activeBudget.id);
+          console.log('Linked expense to budget:', activeBudget.id);
         } else {
-          console.warn('⚠️ No active budget found - expense will not be linked');
+          console.warn('No active budget found - expense will not be linked');
         }
       }
 

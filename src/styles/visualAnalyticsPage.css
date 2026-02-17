@@ -120,10 +120,13 @@
 }
 
 .main-content {
-  padding: 0 16px 24px 16px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .section-container {
@@ -132,46 +135,48 @@
 }
 
 .section-title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--foreground);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   padding-left: 4px;
+  letter-spacing: -0.5px;
 }
 
 .insight-card {
   background-color: var(--card);
-  border-radius: var(--radius-lg);
-  padding: 20px;
+  border-radius: 16px;
+  padding: 28px;
   border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .insight-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1), 0 6px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-4px);
+  border-color: var(--primary);
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 24px;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .icon-wrapper {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .icon-wrapper iconify-icon {
-  font-size: 20px;
+  font-size: 24px;
   color: var(--primary);
 }
 
@@ -200,20 +205,20 @@
 
 /* Donut Chart */
 .donut-chart {
-  width: 160px;
-  height: 160px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 24px auto;
+  margin: 0 auto 28px auto;
   position: relative;
   transition: all 0.3s ease;
 }
 
 .donut-inner {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   background-color: var(--card);
   border-radius: 50%;
   display: flex;
@@ -221,8 +226,9 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 18px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-size: 24px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  letter-spacing: -0.5px;
 }
 
 .chart-wrapper {
@@ -238,21 +244,21 @@
 .chart-legend {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
 }
 
 .legend-item {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  font-size: 13px;
+  gap: 10px;
+  font-size: 14px;
   padding: 4px 0;
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
   margin-top: 4px;
@@ -549,16 +555,62 @@
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .main-content {
-    padding: 20px;
+    padding: 32px;
     max-width: 720px;
     margin: 0 auto;
+    gap: 32px;
+  }
+  
+  .section-title {
+    font-size: 28px;
+  }
+  
+  .insight-card {
+    padding: 32px;
   }
 }
 
 @media (min-width: 1025px) {
   .main-content {
-    padding: 24px;
-    max-width: 960px;
+    padding: 40px;
+    max-width: 1200px;
     margin: 0 auto;
+    gap: 40px;
+  }
+  
+  .tab-navigation {
+    justify-content: center;
+  }
+  
+  .section-title {
+    font-size: 32px;
+  }
+  
+  .insight-card {
+    padding: 36px;
+  }
+  
+  .card-header {
+    font-size: 20px;
+    margin-bottom: 28px;
+  }
+  
+  .donut-chart {
+    width: 240px;
+    height: 240px;
+  }
+  
+  .donut-inner {
+    width: 140px;
+    height: 140px;
+    font-size: 28px;
+  }
+  
+  .chart-legend {
+    gap: 20px;
+  }
+  
+  .legend-item {
+    font-size: 15px;
   }
 }

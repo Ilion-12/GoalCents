@@ -67,23 +67,26 @@
 
 
 .main-content {
-  padding: 24px 20px;
+  padding: 32px 24px;
   flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .goal-card {
   background-color: var(--card);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
 }
 
 .goal-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
   border-color: var(--primary);
 }
 
@@ -95,14 +98,15 @@
 }
 
 .goal-title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--foreground);
+  letter-spacing: -0.5px;
 }
 
 .goal-icon {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background-color: #f0fdfa;
   display: flex;
@@ -111,7 +115,7 @@
 }
 
 .goal-icon iconify-icon {
-  font-size: 20px;
+  font-size: 24px;
   color: #10b981;
 }
 
@@ -136,15 +140,17 @@
 }
 
 .stat-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted-foreground);
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .stat-value {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--foreground);
+  letter-spacing: -0.3px;
 }
 
 .stat-value.saved {
@@ -200,21 +206,109 @@
 
 .action-button {
   flex: 1;
-  height: 48px;
+  height: 52px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 10px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--foreground);
   background: transparent;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-button:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.action-button:hover iconify-icon {
+  color: white;
 }
 
 .action-button iconify-icon {
-  font-size: 18px;
+  font-size: 20px;
   color: var(--foreground);
+  transition: all 0.3s ease;
+}
+
+/* Desktop Media Queries */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .main-content {
+    max-width: 720px;
+    padding: 36px 32px;
+  }
+  
+  .goal-card {
+    padding: 36px;
+  }
+  
+  .goal-title {
+    font-size: 26px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .main-content {
+    max-width: 800px;
+    padding: 48px 40px;
+  }
+  
+  .goal-card {
+    padding: 40px;
+    border-radius: 24px;
+  }
+  
+  .goal-title {
+    font-size: 28px;
+  }
+  
+  .goal-icon {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .goal-icon iconify-icon {
+    font-size: 28px;
+  }
+  
+  .stats-row {
+    gap: 16px;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+  
+  .progress-wrapper {
+    margin-bottom: 40px;
+  }
+  
+  .progress-track {
+    height: 10px;
+  }
+  
+  .button-row {
+    gap: 20px;
+  }
+  
+  .action-button {
+    height: 56px;
+    font-size: 16px;
+  }
+  
+  .action-button iconify-icon {
+    font-size: 22px;
+  }
 }

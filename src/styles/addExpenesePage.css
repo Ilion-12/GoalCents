@@ -78,17 +78,20 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* Amount Section */
 .amount-display {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px 20px;
-  background-color: #ebebeb;
+  gap: 16px;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, #ebebeb 0%, #f5f5f5 100%);
 }
 
 .field-label {
@@ -114,7 +117,7 @@
 }
 
 .amount-text {
-  font-size: 56px;
+  font-size: 64px;
   font-weight: 700;
   color: #cbd5e1;
   border: none;
@@ -139,20 +142,21 @@
 .input-container {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 18px;
-  border: none;
-  border-radius: 5px;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   background: #ffffff;
   font-size: 16px;
   color: var(--foreground);
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .input-container:focus-within {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(6, 182, 164, 0.15);
   background: #ffffff;
+  border-color: var(--primary);
 }
 
 .input-container iconify-icon {
@@ -253,32 +257,31 @@
 
 /* Save Button */
 .save-button {
-  background-color: var(--primary);
+  background: linear-gradient(135deg, var(--primary) 0%, #059669 100%);
   color: white;
   border: none;
-  padding: 16px;
-  border-radius: 5px;
-  font-size: 16px;
+  padding: 18px;
+  border-radius: 8px;
+  font-size: 17px;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin: 24px auto 32px auto;
-  max-width: 400px;
+  gap: 10px;
+  max-width: 500px;
   width: calc(100% - 40px);
   cursor: pointer;
-  box-shadow: 0 4px 6px -1px rgba(6, 182, 164, 0.3);
-  transition: all 0.2s ease;
+  box-shadow: 0 6px 20px rgba(6, 182, 164, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .save-button:hover {
-  background-color: #059888;
-  box-shadow: 0 6px 10px -1px rgba(6, 182, 164, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(6, 182, 164, 0.4);
 }
 
 .save-button:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 .save-button iconify-icon {
@@ -301,6 +304,52 @@
     font-size: 16px;
   }
 
+  .amount-text {
+    font-size: 48px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .main-content {
+    max-width: 720px;
+    gap: 28px;
+  }
+  
+  .amount-display {
+    padding: 36px 28px;
+  }
+  
+  .amount-text {
+    font-size: 72px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .main-content {
+    max-width: 800px;
+    gap: 32px;
+  }
+  
+  .amount-display {
+    padding: 40px 32px;
+  }
+  
+  .amount-text {
+    font-size: 80px;
+  }
+  
+  .input-container {
+    padding: 20px 24px;
+  }
+  
+  .save-button {
+    max-width: 600px;
+    padding: 20px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
   .main-content {
     padding: 0;
     gap: 18px;
@@ -323,7 +372,6 @@
   }
 
   .save-button {
-    margin: 20px auto 28px auto;
     width: calc(100% - 32px);
   }
 
@@ -347,7 +395,6 @@
   .input-container.large {
     min-height: 70px;
   }
-
 }
 
 @media (max-width: 480px) {
@@ -443,7 +490,6 @@
   .save-button {
     padding: 14px;
     font-size: 14px;
-    margin: 16px auto 24px auto;
     width: calc(100% - 24px);
   }
 

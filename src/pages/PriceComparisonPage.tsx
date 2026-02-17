@@ -33,7 +33,6 @@ const PriceComparisonPage: React.FC = () => {
                 <option>Transportation</option>
                 <option>Utilities</option>
               </select>
-              <iconify-icon icon="lucide:chevron-down"></iconify-icon>
             </div>
           </div>
           <div className="filter-field">
@@ -44,7 +43,6 @@ const PriceComparisonPage: React.FC = () => {
                 <option>Rice</option>
                 <option>Chicken</option>
               </select>
-              <iconify-icon icon="lucide:chevron-down"></iconify-icon>
             </div>
           </div>
         </section>

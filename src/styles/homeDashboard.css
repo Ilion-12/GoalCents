@@ -86,14 +86,17 @@
 }
 
 .main-content {
-  padding: 0 24px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .greeting {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 800;
   color: var(--foreground);
   display: flex;
@@ -104,31 +107,34 @@
 
 /* Main Summary Card */
 .budget-summary {
-  background-color: var(--primary);
+  background: linear-gradient(135deg, var(--primary) 0%, #059669 100%);
   color: var(--primary-foreground);
-  padding: 24px;
-  border-radius: var(--radius-xl);
+  padding: 32px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.4), 0 4px 10px -2px rgba(20, 184, 166, 0.2);
+  gap: 28px;
+  box-shadow: 0 10px 40px -5px rgba(20, 184, 166, 0.4), 0 4px 10px -2px rgba(20, 184, 166, 0.2);
   transition: all 0.3s ease;
 }
 
 .budget-summary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 35px -5px rgba(20, 184, 166, 0.5), 0 6px 15px -2px rgba(20, 184, 166, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px -5px rgba(20, 184, 166, 0.5), 0 8px 20px -2px rgba(20, 184, 166, 0.3);
 }
 
 .balance-label {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 4px;
+  font-size: 16px;
+  opacity: 0.95;
+  margin-bottom: 8px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .balance-amount {
-  font-size: 32px;
+  font-size: 48px;
   font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .stats-row {
@@ -144,14 +150,16 @@
 }
 
 .stat-title {
-  font-size: 12px;
-  opacity: 0.9;
-  margin-bottom: 4px;
+  font-size: 14px;
+  opacity: 0.95;
+  margin-bottom: 6px;
+  font-weight: 500;
 }
 
 .stat-number {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 /* Weekly/Monthly Row */
@@ -163,35 +171,39 @@
 
 .time-card {
   background: var(--card);
-  padding: 20px;
-  border-radius: var(--radius-lg);
+  padding: 24px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
   border: 1px solid var(--border);
   transition: all 0.3s ease;
 }
 
 .time-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.08);
   border-color: var(--primary);
 }
 
 .time-label {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--muted-foreground);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .time-amount {
-  font-size: 20px;
+  font-size: 28px;
   font-weight: 800;
   color: var(--foreground);
+  letter-spacing: -0.5px;
 }
 
 .time-description {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted-foreground);
 }
 
@@ -327,20 +339,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 30px 20px;
-  border-radius: var(--radius-lg);
+  gap: 12px;
+  padding: 32px 24px;
+  border-radius: 12px;
   cursor: pointer;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .action-button:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
 }
 
 .action-button:active {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 
@@ -348,18 +360,24 @@
   background: var(--card);
   color: var(--foreground);
   border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .action-button.secondary:hover {
   border-color: var(--primary);
   background: var(--primary);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(6, 182, 164, 0.25);
+  color: white;
+}
+
+.action-button.secondary:hover iconify-icon {
+  color: white !important;
 }
 
 .action-button.secondary iconify-icon {
-  font-size: 24px;
+  font-size: 32px;
   background:transparent;
+  transition: all 0.3s ease;
 }
 
 .action-button.secondary iconify-icon.budget-icon {
@@ -371,8 +389,9 @@
 }
 
 .button-label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 
@@ -428,12 +447,69 @@
   .main-content {
     max-width: 720px;
     margin: 0 auto;
+    padding: 32px;
+    gap: 28px;
+  }
+  
+  .greeting {
+    font-size: 32px;
+  }
+  
+  .balance-amount {
+    font-size: 52px;
   }
 }
 
 @media (min-width: 1025px) {
   .main-content {
-    max-width: 960px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 40px;
+    gap: 32px;
+  }
+  
+  .greeting {
+    font-size: 36px;
+  }
+  
+  .budget-summary {
+    padding: 40px;
+  }
+  
+  .balance-amount {
+    font-size: 56px;
+  }
+  
+  .time-periods {
+    gap: 24px;
+  }
+  
+  .time-card {
+    padding: 28px;
+  }
+  
+  .time-amount {
+    font-size: 32px;
+  }
+  
+  .quick-actions {
+    gap: 24px;
+  }
+  
+  .action-button {
+    padding: 40px 28px;
+  }
+  
+  .action-button.secondary iconify-icon {
+    font-size: 40px;
+  }
+  
+  .button-label {
+    font-size: 15px;
+  }
+  
+  /* Two-row layout for desktop */
+  .quick-actions:last-of-type {
+    margin-bottom: 20px;
   }
 }
