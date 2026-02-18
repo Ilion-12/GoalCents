@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import '../styles/landingPage.css';
@@ -7,10 +7,37 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
-  const handleInstall = () => {
-    // PWA installation logic will be handled here
-    console.log('Install app');
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) {
+      alert('App is already installed or cannot be installed on this device.');
+      return;
+    }
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+    } else {
+      console.log('User dismissed the install prompt');
+    }
+    
+    setDeferredPrompt(null);
   };
 
   const handleNavigation = (path: string) => {
@@ -66,6 +93,9 @@ const LandingPage: React.FC = () => {
       <div className="install-section">
         <div className="install-button" onClick={handleInstall}>
           Install App
+        </div>
+        <div className="install-button" onClick={() => handleNavigation('/login')} style={{ background: 'transparent', border: '2px solid var(--primary)', color: 'var(--primary)' }}>
+          Continue on Web
         </div>
       </div>
 
