@@ -68,7 +68,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="page-container">
-      <div className="logo-section">
+      <div className="logo-section" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
         <div className="logo-wrapper">
           <img src="/IMG/logo.png" alt="Smart Expense Tracker" className="logo-image" />
         </div>
