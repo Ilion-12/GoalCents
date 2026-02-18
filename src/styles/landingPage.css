@@ -36,7 +36,7 @@
   min-height: 100vh;
   position: relative;
   font-family: var(--font-family-body);
-  background-color: var(--background);
+  background: linear-gradient(180deg, var(--background) 0%, #ffffff 100%);
   color: var(--foreground);
   margin: 0 auto;
   display: flex;
@@ -51,6 +51,38 @@
   align-items: center;
   gap: 16px;
   text-align: center;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .logo-wrapper {
@@ -64,6 +96,13 @@
   width: 72px;
   height: 72px;
   object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(6, 182, 164, 0.2));
+  transition: transform 0.3s ease;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.logo-image:hover {
+  transform: scale(1.05);
 }
 
 .logo-icon {
@@ -120,6 +159,7 @@
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 24px;
+  animation: fadeIn 1s ease-out;
   width: 100%;
 }
 
@@ -172,29 +212,60 @@
 }
 
 .install-section {
-  padding: 24px;
+  padding: 40px 24px;
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
-.install-button {
-  background: linear-gradient(135deg, var(--primary) 0%, #059669 100%);
-  color: var(--primary-foreground);
-  font-size: 17px;
-  font-weight: 600;
-  padding: 18px 36px;
-  border-radius: 14px;
+.install-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(6, 182, 164, 0.3);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 500px;
 }
 
-.install-button:hover {
+.install-button {
+  font-size: 17px;
+  font-weight: 600;
+  padding: 18px 32px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.install-button.primary {
+  background: linear-gradient(135deg, var(--primary) 0%, #059669 100%);
+  color: var(--primary-foreground);
+  box-shadow: 0 8px 24px rgba(6, 182, 164, 0.3);
+}
+
+.install-button.primary:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(6, 182, 164, 0.4);
+}
+
+.install-button.secondary {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  box-shadow: 0 4px 12px rgba(6, 182, 164, 0.15);
+}
+
+.install-button.secondary:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(6, 182, 164, 0.3);
 }
 
 .install-button:active {
@@ -208,6 +279,8 @@
   flex-direction: column;
   gap: 24px;
   margin-top: 16px;
+  border-top: 1px solid rgba(6, 182, 164, 0.1);
+  animation: fadeInUp 1s ease-out;
 }
 
 .benefits-title {
@@ -244,12 +317,20 @@
 }
 
 .footer-link {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted-foreground);
   text-decoration: none;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.footer-link:hover {
+  color: var(--primary);
+  background: var(--secondary);
 }
 
 /* Responsive Media Queries */
@@ -287,45 +368,66 @@
   }
 
   .install-section {
-    padding: 20px 16px;
+    padding: 32px 16px;
+  }
+
+  .install-buttons {
+    width: 100%;
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
+  .page-header {
+    padding: 40px 32px;
+  }
+
+  .hero {
+    padding: 48px 32px;
+  }
+
   .features {
     max-width: 720px;
+    margin: 0 auto;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+    padding: 32px;
   }
 
   .benefits {
     max-width: 720px;
     margin: 0 auto;
-    padding: 40px 32px;
+    padding: 48px 32px;
+    border-radius: 16px;
   }
 
   .hero-title {
-    font-size: 32px;
+    font-size: 36px;
   }
 
   .hero-subtitle {
-    font-size: 18px;
+    font-size: 20px;
+  }
+
+  .install-buttons {
+    flex-direction: row;
+    max-width: 700px;
   }
 
   .install-button {
-    max-width: 400px;
+    flex: 1;
   }
 }
 
 @media (min-width: 1025px) {
   .page-container {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.08);
   }
 
   .page-header {
-    padding: 56px 40px 40px;
-    gap: 20px;
+    padding: 64px 40px 40px;
+    gap: 24px;
   }
 
   .logo-image {
@@ -343,41 +445,45 @@
   }
 
   .app-name {
-    font-size: 32px;
+    font-size: 34px;
+    letter-spacing: -1px;
   }
 
   .hero {
-    padding: 80px 40px 60px;
-    gap: 20px;
+    padding: 80px 60px;
+    gap: 24px;
   }
 
   .hero-title {
-    font-size: 56px;
-    max-width: 800px;
+    font-size: 60px;
+    max-width: 900px;
+    letter-spacing: -2px;
   }
 
   .hero-subtitle {
-    font-size: 24px;
+    font-size: 26px;
     color: var(--muted-foreground);
     max-width: 600px;
   }
 
   .features {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 60px 40px;
+    padding: 60px 60px;
     grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
+    gap: 32px;
   }
 
   .feature-card {
-    padding: 28px;
+    padding: 32px;
     gap: 24px;
+    border-radius: 16px;
   }
 
   .feature-icon {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
   }
 
   .feature-icon iconify-icon {
@@ -389,36 +495,43 @@
   }
 
   .install-section {
-    padding: 60px 40px;
+    padding: 80px 60px;
+  }
+
+  .install-buttons {
+    flex-direction: row;
+    max-width: 900px;
+    gap: 28px;
   }
 
   .install-button {
-    max-width: 450px;
-    padding: 22px 56px;
+    padding: 24px 56px;
     font-size: 19px;
+    flex: 1;
+    border-radius: 16px;
   }
 
   .benefits {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 64px 40px;
-    border-radius: 20px;
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 72px 60px;
+    border-radius: 24px;
   }
 
   .benefits-title {
-    font-size: 32px;
-    margin-bottom: 24px;
+    font-size: 36px;
+    margin-bottom: 32px;
   }
 
   .benefits-list {
-    max-width: 700px;
+    max-width: 800px;
     margin: 0 auto;
-    gap: 24px;
+    gap: 28px;
   }
 
   .benefit-item {
-    font-size: 18px;
-    padding: 16px 0;
+    font-size: 19px;
+    padding: 18px 0;
   }
 
   .check-icon iconify-icon {
@@ -432,11 +545,5 @@
 
   .footer-link {
     font-size: 16px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-  }
-
-  .footer-link:hover {
-    color: var(--primary);
   }
 }

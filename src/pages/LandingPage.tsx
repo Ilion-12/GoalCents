@@ -3,16 +3,37 @@ import { useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
 import '../styles/landingPage.css';
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+interface NavigatorStandalone extends Navigator {
+  standalone?: boolean;
+}
+
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+
+  // Check if app is installed and redirect to login
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                        (window.navigator as NavigatorStandalone).standalone ||
+                        document.referrer.includes('android-app://');
+    
+    if (isStandalone) {
+      // App is installed, redirect to login
+      navigate('/login', { replace: true });
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -47,7 +68,7 @@ const LandingPage: React.FC = () => {
   return (
     <div className="page-container">
       <header className="page-header">
-        <div className="logo-wrapper">
+        <div className="logo-wrapper" onClick={() => handleNavigation('/')} style={{ cursor: 'pointer' }}>
           <img src="/IMG/logo.png" alt="Smart Expense Tracker" className="logo-image" />
         </div>
         <h1 className="app-name">
@@ -91,11 +112,15 @@ const LandingPage: React.FC = () => {
       </div>
 
       <div className="install-section">
-        <div className="install-button" onClick={handleInstall}>
-          Install App
-        </div>
-        <div className="install-button" onClick={() => handleNavigation('/login')} style={{ background: 'transparent', border: '2px solid var(--primary)', color: 'var(--primary)' }}>
-          Continue on Web
+        <div className="install-buttons">
+          <div className="install-button primary" onClick={handleInstall}>
+            <iconify-icon icon="lucide:download" style={{ fontSize: '20px' }}></iconify-icon>
+            Install App
+          </div>
+          <div className="install-button secondary" onClick={() => handleNavigation('/login')}>
+            <iconify-icon icon="lucide:arrow-right" style={{ fontSize: '20px' }}></iconify-icon>
+            Continue on Web
+          </div>
         </div>
       </div>
 
