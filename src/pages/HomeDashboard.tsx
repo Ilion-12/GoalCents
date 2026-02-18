@@ -23,7 +23,7 @@ const HomeDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('User');
   
-  // OOP: Initialize service classes
+  // Initialize service classes
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [budgetCalculator] = useState(() => BudgetCalculator.getInstance());
   const [savingsGoalManager] = useState(() => SavingsGoalManager.getInstance());
@@ -34,7 +34,7 @@ const HomeDashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      // OOP: Use AuthenticationManager to get current user
+      // Use AuthenticationManager to get current user
       const user = authManager.getCurrentUser();
       
       if (!user) {
@@ -129,13 +129,13 @@ const HomeDashboard: React.FC = () => {
         console.log('📭 No active budget - showing zero expenses');
       }
 
-      // OOP: Use SavingsGoalManager to fetch savings goal
+      // Use SavingsGoalManager to fetch savings goal
       const goalResult = await savingsGoalManager.getLatestGoal(user.id);
       if (goalResult.success && goalResult.data) {
         setSavingsGoal(goalResult.data);
       }
 
-      // OOP: Use BudgetCalculator to generate budget summary
+      // Use BudgetCalculator to generate budget summary
       const totalBudget = budgetData?.amount || 0;
       const budgetSummary = budgetCalculator.generateBudgetSummary(totalBudget, expenses);
       setSummary(budgetSummary);
@@ -150,13 +150,13 @@ const HomeDashboard: React.FC = () => {
     navigate(path);
   };
 
-  // OOP: Use BudgetCalculator to calculate budget percentage
+  // Use BudgetCalculator to calculate budget percentage
   const budgetPercentage = budgetCalculator.calculateBudgetPercentage(summary.totalSpent, summary.totalBudget);
   
-  // OOP: Use SavingsGoalManager to calculate savings progress
+  // Use SavingsGoalManager to calculate savings progress
   const savingsProgress = savingsGoal ? savingsGoalManager.calculateProgress(savingsGoal).percentage : 0;
   
-  // OOP: Use BudgetCalculator to generate budget alert
+  // Use BudgetCalculator to generate budget alert
   const budgetAlert = budgetCalculator.generateBudgetAlert(budgetPercentage);
 
   if (loading) {

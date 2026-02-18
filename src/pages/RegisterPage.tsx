@@ -16,7 +16,7 @@ const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  // OOP: Initialize service classes
+  // Initialize service classes
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [formValidator] = useState(() => FormValidator.getInstance());
 
@@ -32,7 +32,7 @@ const RegisterPage: React.FC = () => {
   };
 
   const handleRegister = async () => {
-    // OOP: Use FormValidator to validate registration form
+    // Use FormValidator to validate registration form
     const validation = formValidator.validateRegistrationForm(
       formData.fullName,
       formData.email,
@@ -46,7 +46,7 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
-    // OOP: Use AuthenticationManager to handle registration
+    // Use AuthenticationManager to handle registration
     const result = await authManager.register(
       formData.fullName,
       formData.email,

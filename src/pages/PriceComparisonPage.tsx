@@ -19,7 +19,7 @@ const PriceComparisonPage: React.FC = () => {
   };
 
   return (
-    <div className="page-container">
+    <div>
       <Header title="Price Comparison" onBackClick={handleBack} showUserProfile={true} />
 
       <main className="main-content">

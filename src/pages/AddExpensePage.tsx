@@ -18,7 +18,7 @@ const AddExpensePage: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   
-  // OOP: Initialize service classes
+  //Initialize service classes
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [formValidator] = useState(() => FormValidator.getInstance());
   const [expenseManager] = useState(() => ExpenseManager.getInstance());
@@ -28,12 +28,12 @@ const AddExpensePage: React.FC = () => {
   }, []);
 
   const fetchUser = async () => {
-    // OOP: Use AuthenticationManager to check if user is authenticated
+    //  Use AuthenticationManager to check if user is authenticated
     authManager.requireAuth(navigate);
   };
 
   const handleSave = async () => {
-    // OOP: Use FormValidator to validate expense form
+    // Use FormValidator to validate expense form
     const validation = formValidator.validateExpenseForm(
       expense.amount || 0,
       expense.description || '',
@@ -47,7 +47,7 @@ const AddExpensePage: React.FC = () => {
 
     setLoading(true);
     try {
-      // OOP: Use AuthenticationManager to get current user
+      //Use AuthenticationManager to get current user
       const userId = authManager.getCurrentUserId();
       
       if (!userId) {
@@ -56,7 +56,7 @@ const AddExpensePage: React.FC = () => {
         return;
       }
       
-      // OOP: Use ExpenseManager to create expense
+      // Use ExpenseManager to create expense
       const result = await expenseManager.createExpense({
         user_id: userId,
         amount: expense.amount || 0,

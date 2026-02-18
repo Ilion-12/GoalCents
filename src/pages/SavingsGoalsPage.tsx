@@ -18,7 +18,7 @@ const SavingsGoalsPage: React.FC = () => {
     current_amount: 0
   });
   
-  // OOP: Initialize service classes
+  // Initialize service classes
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [formValidator] = useState(() => FormValidator.getInstance());
   const [savingsGoalManager] = useState(() => SavingsGoalManager.getInstance());
@@ -29,7 +29,7 @@ const SavingsGoalsPage: React.FC = () => {
 
   const fetchSavingsGoal = async () => {
     try {
-      // OOP: Use AuthenticationManager to get current user
+      // Use AuthenticationManager to get current user
       const userId = authManager.getCurrentUserId();
       
       if (!userId) {
@@ -38,7 +38,7 @@ const SavingsGoalsPage: React.FC = () => {
         return;
       }
 
-      // OOP: Use SavingsGoalManager to get or create default goal
+      // Use SavingsGoalManager to get or create default goal
       const result = await savingsGoalManager.getOrCreateDefaultGoal(userId);
 
       if (result.success && result.data) {
@@ -63,7 +63,7 @@ const SavingsGoalsPage: React.FC = () => {
   const handleSaveEdit = async () => {
     if (!goal) return;
 
-    // OOP: Use FormValidator to validate savings goal form
+    // Use FormValidator to validate savings goal form
     const validation = formValidator.validateSavingsGoalForm(
       editValues.goal_name,
       editValues.target_amount,
@@ -76,7 +76,7 @@ const SavingsGoalsPage: React.FC = () => {
     }
 
     try {
-      // OOP: Use SavingsGoalManager to update goal
+      // Use SavingsGoalManager to update goal
       const result = await savingsGoalManager.updateGoal(goal.id, {
         goal_name: editValues.goal_name,
         target_amount: editValues.target_amount,
@@ -104,7 +104,7 @@ const SavingsGoalsPage: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      // OOP: Use SavingsGoalManager to reset goal
+      // Use SavingsGoalManager to reset goal
       const result = await savingsGoalManager.resetGoal(goal.id);
 
       if (result.success && result.data) {
@@ -142,7 +142,7 @@ const SavingsGoalsPage: React.FC = () => {
     );
   }
 
-  // OOP: Use SavingsGoalManager to calculate progress
+  // Use SavingsGoalManager to calculate progress
   const goalProgress = savingsGoalManager.calculateProgress(goal);
   const progressPercent = goalProgress.percentage;
   const remaining = goalProgress.remaining;

@@ -10,7 +10,7 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   
-  // OOP: Initialize service classes
+  // Initialize service classes
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [formValidator] = useState(() => FormValidator.getInstance());
 
@@ -22,14 +22,14 @@ const LoginPage: React.FC = () => {
   }, [authManager, navigate]);
 
   const handleLogin = async () => {
-    // OOP: Use FormValidator to validate login form
+    // Use FormValidator to validate login form
     const validation = formValidator.validateLoginForm(username, password);
     if (!validation.isValid) {
       alert(validation.message);
       return;
     }
 
-    // OOP: Use AuthenticationManager to handle login
+    // Use AuthenticationManager to handle login
     const result = await authManager.login(username, password);
     
     if (result.success) {

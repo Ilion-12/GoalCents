@@ -15,7 +15,7 @@ const SetBudgetPage: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   
-  // OOP: Initialize service classes
+  // Initialize service classes
   const [authManager] = useState(() => AuthenticationManager.getInstance());
   const [formValidator] = useState(() => FormValidator.getInstance());
 
@@ -25,7 +25,7 @@ const SetBudgetPage: React.FC = () => {
 
   const fetchUserAndBudget = async () => {
     try {
-      // OOP: Use AuthenticationManager to get current user
+      //  Use AuthenticationManager to get current user
       const userId = authManager.getCurrentUserId();
       
       if (!userId) {
@@ -56,7 +56,7 @@ const SetBudgetPage: React.FC = () => {
   };
 
   const handleSave = async () => {
-    // OOP: Use FormValidator to validate budget form
+    // Use FormValidator to validate budget form
     const validation = formValidator.validateBudgetForm(budget.amount || 0);
     if (!validation.isValid) {
       alert(validation.message);
@@ -65,7 +65,7 @@ const SetBudgetPage: React.FC = () => {
 
     setLoading(true);
     try {
-      // OOP: Use AuthenticationManager to get current user
+      // Use AuthenticationManager to get current user
       const userId = authManager.getCurrentUserId();
       
       if (!userId) {
