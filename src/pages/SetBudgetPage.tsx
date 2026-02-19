@@ -13,6 +13,7 @@ const SetBudgetPage: React.FC = () => {
     amount: 0,
     timeframe: 'week'
   });
+  const [existingBudgetId, setExistingBudgetId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   
   // Initialize service classes
@@ -47,15 +48,92 @@ const SetBudgetPage: React.FC = () => {
           amount: data.amount,
           timeframe: data.timeframe
         });
+        setExistingBudgetId(data.id); // Store the existing budget ID
       } else if (error && error.code !== 'PGRST116') {
         console.error('Error fetching budget:', error);
+      } else {
+        // No existing budget
+        setExistingBudgetId(null);
       }
     } catch (error) {
       console.error('Error fetching budget:', error);
     }
   };
 
-  const handleSave = async () => {
+  const handleEditBudget = async () => {
+    if (!existingBudgetId) {
+      alert('No existing budget to edit');
+      return;
+    }
+
+    // Use FormValidator to validate budget form
+    const validation = formValidator.validateBudgetForm(budget.amount || 0);
+    if (!validation.isValid) {
+      alert(validation.message);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Use AuthenticationManager to get current user
+      const userId = authManager.getCurrentUserId();
+      
+      if (!userId) {
+        alert('Please login first');
+        navigate('/login');
+        return;
+      }
+
+      // Calculate new end date based on timeframe
+      const { data: currentBudget } = await supabase
+        .from('budgets')
+        .select('start_date')
+        .eq('id', existingBudgetId)
+        .single();
+
+      const startDate = currentBudget?.start_date ? new Date(currentBudget.start_date) : new Date();
+      const endDate = new Date(startDate);
+      
+      if (budget.timeframe === 'week') {
+        endDate.setDate(endDate.getDate() + 7);
+      } else {
+        endDate.setMonth(endDate.getMonth() + 1);
+      }
+
+      // Update existing budget
+      const { data, error } = await supabase
+        .from('budgets')
+        .update({
+          amount: budget.amount,
+          timeframe: budget.timeframe,
+          end_date: endDate.toISOString().split('T')[0]
+        })
+        .eq('id', existingBudgetId)
+        .select();
+
+      if (error) {
+        console.error('Error updating budget:', error);
+        alert(`Failed to update budget: ${error.message}`);
+        setLoading(false);
+        return;
+      }
+
+      console.log('Budget updated successfully:', data);
+      alert('Budget updated successfully!');
+      navigate('/dashboard');
+    } catch (error: unknown) {
+      console.error('Error updating budget:', error);
+      if (error && typeof error === 'object' && 'message' in error) {
+        alert(`Failed to update budget: ${(error as { message: string }).message}`);
+      } else {
+        alert('An error occurred while updating budget. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNewBudget = async () => {
     // Use FormValidator to validate budget form
     const validation = formValidator.validateBudgetForm(budget.amount || 0);
     if (!validation.isValid) {
@@ -190,12 +268,28 @@ const SetBudgetPage: React.FC = () => {
             />
           </div>
             
-        <button className="save-button" onClick={handleSave} disabled={loading}>
-          <div className="button-icon">
-            <iconify-icon icon={loading ? "lucide:loader-2" : "lucide:wallet"}></iconify-icon>
-          </div>
-          <span>{loading ? 'Saving...' : 'Save Budget'}</span>
-        </button>
+        <div className="button-group" style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+          {existingBudgetId && (
+            <button className="save-button" onClick={handleEditBudget} disabled={loading} style={{ flex: 1 }}>
+              <div className="button-icon">
+                <iconify-icon icon={loading ? "lucide:loader-2" : "lucide:pencil"}></iconify-icon>
+              </div>
+              <span>{loading ? 'Updating...' : 'Edit Budget'}</span>
+            </button>
+          )}
+          
+          <button 
+            className="save-button" 
+            onClick={handleNewBudget} 
+            disabled={loading}
+            style={{ flex: 1, ...(existingBudgetId ? { backgroundColor: 'var(--primary)' } : {}) }}
+          >
+            <div className="button-icon">
+              <iconify-icon icon={loading ? "lucide:loader-2" : "lucide:plus-circle"}></iconify-icon>
+            </div>
+            <span>{loading ? 'Creating...' : 'New Budget'}</span>
+          </button>
+        </div>
 
         </section>
       </main>

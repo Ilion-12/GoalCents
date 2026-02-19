@@ -269,7 +269,7 @@ const HomeDashboard: React.FC = () => {
             <iconify-icon  icon="lucide:pie-chart" className="spending-icon" style={isMobile ? { fontSize: '20px' } : {}}></iconify-icon>
             <span className="button-label" style={isMobile ? { fontSize: '12px' } : {}}>Spending</span>
           </div>
-          <div className="action-button secondary" onClick={() => handleNavigation('/price-comparison')} style={isMobile ? { padding: '14px 10px' } : {}}>
+          <div className="action-button secondary" onClick={() => handleNavigation('')} style={isMobile ? { padding: '14px 10px' } : {}}>
             <iconify-icon icon="lucide:shopping-cart" className="compare-icon" style={isMobile ? { fontSize: '20px' } : {}}></iconify-icon>
             <span className="button-label" style={isMobile ? { fontSize: '12px' } : {}}>Prices</span>
           </div>

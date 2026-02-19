@@ -141,31 +141,36 @@ const VisualAnalyticsPage: React.FC = () => {
         .limit(1)
         .single();
 
-      // Process data using CURRENT BUDGET expenses only
-      if (currentBudgetExpenses.length > 0) {
-        // Calculate spending by category
-        const categoryMap = new Map<string, { amount: number; isEssential: boolean }>();
+      // Process data - check if budget exists, not if expenses exist
+      if (budgetData) {
+        // Calculate spending by category from expenses
         let totalSpent = 0;
+        const categoryMap = new Map<string, { amount: number; isEssential: boolean }>();
 
-        currentBudgetExpenses.forEach(expense => {
-          const category = expense.category || 'Others';
-          const current = categoryMap.get(category) || { amount: 0, isEssential: expense.is_essential };
-          current.amount += expense.amount;
-          categoryMap.set(category, current);
-          totalSpent += expense.amount;
-        });
+        if (currentBudgetExpenses.length > 0) {
+          currentBudgetExpenses.forEach(expense => {
+            const category = expense.category || 'Others';
+            const current = categoryMap.get(category) || { amount: 0, isEssential: expense.is_essential };
+            current.amount += expense.amount;
+            categoryMap.set(category, current);
+            totalSpent += expense.amount;
+          });
 
-        const categoriesArray: CategoryData[] = Array.from(categoryMap.entries()).map(([category, data]) => ({
-          category,
-          amount: data.amount,
-          percentage: totalSpent > 0 ? Math.round((data.amount / totalSpent) * 100) : 0,
-          isEssential: data.isEssential
-        })).sort((a, b) => b.amount - a.amount);
+          const categoriesArray: CategoryData[] = Array.from(categoryMap.entries()).map(([category, data]) => ({
+            category,
+            amount: data.amount,
+            percentage: totalSpent > 0 ? Math.round((data.amount / totalSpent) * 100) : 0,
+            isEssential: data.isEssential
+          })).sort((a, b) => b.amount - a.amount);
 
-        setCategories(categoriesArray);
+          setCategories(categoriesArray);
+        } else {
+          // No expenses yet, but budget exists
+          setCategories([]);
+        }
 
-        // Calculate budget data
-        const totalBudget = budgetData?.amount || 0;
+        // Calculate budget data - always set if budget exists
+        const totalBudget = budgetData.amount;
         const remaining = totalBudget - totalSpent;
         const percentage = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
         setBudget({
@@ -182,21 +187,23 @@ const VisualAnalyticsPage: React.FC = () => {
             type: 'warning' as const,
             icon: 'lucide:alert-triangle',
             title: 'Budget Warning',
-            message: `You have reached ${percentage}% of your ${budgetData?.timeframe || 'monthly'} budget.`
+            message: `You have reached ${percentage}% of your ${budgetData.timeframe || 'monthly'} budget.`
           });
         }
 
-        const essentialSpent = currentBudgetExpenses
-          .filter(e => !e.is_essential)
-          .reduce((sum, e) => sum + e.amount, 0);
-        
-        if (essentialSpent > totalSpent * 0.3) {
-          newAlerts.push({
-            type: 'info' as const,
-            icon: 'lucide:info',
-            title: 'Spending Update',
-            message: 'Non-essential expenses are higher than recommended.'
-          });
+        if (currentBudgetExpenses.length > 0) {
+          const essentialSpent = currentBudgetExpenses
+            .filter(e => !e.is_essential)
+            .reduce((sum, e) => sum + e.amount, 0);
+          
+          if (essentialSpent > totalSpent * 0.3) {
+            newAlerts.push({
+              type: 'info' as const,
+              icon: 'lucide:info',
+              title: 'Spending Update',
+              message: 'Non-essential expenses are higher than recommended.'
+            });
+          }
         }
 
         if (percentage < 80 && totalBudget > 0) {
@@ -210,7 +217,7 @@ const VisualAnalyticsPage: React.FC = () => {
 
         setAlerts(newAlerts);
       } else {
-        // No active budget - reset current budget data but keep trends
+        // No active budget - reset everything
         setCategories([]);
         setBudget({
           total: 0,

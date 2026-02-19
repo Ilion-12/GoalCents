@@ -159,13 +159,13 @@ const LandingPage: React.FC = () => {
       </section>
 
   <footer style={{padding: "32px 24px", display: "flex", flexDirection: "row", flexWrap: "nowrap", justifyContent: "center", alignItems: "center", gap: 24, background: "var(--background)", borderTop: "1px solid var(--border)"}}>
-        <span className="footer-link" onClick={() => handleNavigation('/dashboard')}>
+        <span className="footer-link" onClick={() => handleNavigation('/')}>
           About
         </span>
-        <span className="footer-link" onClick={() => handleNavigation('/dashboard')}>
+        <span className="footer-link" onClick={() => handleNavigation('/')}>
           Privacy
         </span>
-        <span className="footer-link" onClick={() => handleNavigation('/dashboard')}>
+        <span className="footer-link" onClick={() => handleNavigation('/')}>
           Contact
         </span>
       </footer>
