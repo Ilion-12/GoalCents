@@ -83,7 +83,6 @@ const RegisterPage: React.FC = () => {
           <input
             type="text"
             className="form-input"
-            placeholder="John Doe"
             value={formData.fullName}
             onChange={(e) => handleChange('fullName', e.target.value)}
           />
@@ -94,7 +93,6 @@ const RegisterPage: React.FC = () => {
           <input
             type="email"
             className="form-input"
-            placeholder="john@example.com"
             value={formData.email}
             onChange={(e) => handleChange('email', e.target.value)}
           />
@@ -105,7 +103,6 @@ const RegisterPage: React.FC = () => {
           <input
             type="text"
             className="form-input"
-            placeholder="johndoe123"
             value={formData.username}
             onChange={(e) => handleChange('username', e.target.value)}
           />

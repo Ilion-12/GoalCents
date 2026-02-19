@@ -60,7 +60,6 @@ const LoginPage: React.FC = () => {
           <input
             type="text"
             className="text-input"
-            placeholder="Enter your username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
