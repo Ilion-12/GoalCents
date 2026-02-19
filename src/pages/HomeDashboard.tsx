@@ -87,7 +87,7 @@ const HomeDashboard: React.FC = () => {
           }
         }
         
-        // Now call the function
+        // Calling the function in supabased
         const { data, error } = await supabase.rpc('process_finished_budgets', {
           p_user_id: user.id
         });
@@ -174,51 +174,51 @@ const HomeDashboard: React.FC = () => {
     <div className="">
       <Header title="Home" showMenu={true} showUserProfile={true} />
 
-      <main className="main-content">
-        <h2 className="greeting" style={isMobile ? { fontSize: '24px' } : {}}>Hello, {userName}! 👋</h2>
+      <main className="main-content" style={isMobile ? { padding: '16px' } : {}}>
+        <h2 className="greeting" style={isMobile ? { fontSize: '22px', marginBottom: '20px' } : {}}>Hello, {userName}! 👋</h2>
 
         {/* Main Budget Card */}
-        <div className="budget-summary">
+        <div className="budget-summary" style={isMobile ? { padding: '20px', marginBottom: '16px' } : {}}>
           <div className="total-balance">
-            <div className="balance-label">Total Budget</div>
-            <div className="balance-amount">₱{summary.totalBudget.toLocaleString()}</div>
+            <div className="balance-label" style={isMobile ? { fontSize: '13px' } : {}}>Total Budget</div>
+            <div className="balance-amount" style={isMobile ? { fontSize: '28px' } : {}}>₱{summary.totalBudget.toLocaleString()}</div>
           </div>
 
-          <div className="stats-row">
-            <div className="stat-group">
-              <span className="stat-title">Total Spent</span>
-              <span className="stat-number">₱{summary.totalSpent.toLocaleString()}</span>
+          <div className="stats-row" style={isMobile ? { gap: '12px' } : {}}>
+            <div className="stat-group" style={isMobile ? { padding: '12px' } : {}}>
+              <span className="stat-title" style={isMobile ? { fontSize: '12px' } : {}}>Total Spent</span>
+              <span className="stat-number" style={isMobile ? { fontSize: '16px' } : {}}>₱{summary.totalSpent.toLocaleString()}</span>
             </div>
-            <div className="stat-group">
-              <span className="stat-title">Remaining</span>
-              <span className="stat-number">₱{summary.remaining.toLocaleString()}</span>
+            <div className="stat-group" style={isMobile ? { padding: '12px' } : {}}>
+              <span className="stat-title" style={isMobile ? { fontSize: '12px' } : {}}>Remaining</span>
+              <span className="stat-number" style={isMobile ? { fontSize: '16px' } : {}}>₱{summary.remaining.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
         {/* Period Stats */}
-        <div className="time-periods" style={isMobile ? { flexDirection: 'column', gap: '12px' } : {}}>
-          <div className="time-card" style={isMobile ? { width: '100%' } : {}}>
-            <span className="time-label">Weekly</span>
-            <span className="time-amount">₱{summary.weeklySpent.toLocaleString()}</span>
-            <span className="time-description">Spent this week</span>
+        <div className="time-periods" style={isMobile ? { flexDirection: 'column', gap: '12px', marginBottom: '16px' } : {}}>
+          <div className="time-card" style={isMobile ? { width: '100%', padding: '16px' } : {}}>
+            <span className="time-label" style={isMobile ? { fontSize: '12px' } : {}}>Weekly</span>
+            <span className="time-amount" style={isMobile ? { fontSize: '20px' } : {}}>₱{summary.weeklySpent.toLocaleString()}</span>
+            <span className="time-description" style={isMobile ? { fontSize: '11px' } : {}}>Spent this week</span>
           </div>
-          <div className="time-card" style={isMobile ? { width: '100%' } : {}}>
-            <span className="time-label">Monthly</span>
-            <span className="time-amount">₱{summary.monthlySpent.toLocaleString()}</span>
-            <span className="time-description">Spent this month</span>
+          <div className="time-card" style={isMobile ? { width: '100%', padding: '16px' } : {}}>
+            <span className="time-label" style={isMobile ? { fontSize: '12px' } : {}}>Monthly</span>
+            <span className="time-amount" style={isMobile ? { fontSize: '20px' } : {}}>₱{summary.monthlySpent.toLocaleString()}</span>
+            <span className="time-description" style={isMobile ? { fontSize: '11px' } : {}}>Spent this month</span>
           </div>
         </div>
 
         {/* Alert */}
         {budgetAlert && (
-          <div className="warning-box">
-            <div className="warning-icon">
+          <div className="warning-box" style={isMobile ? { padding: '14px', marginBottom: '16px' } : {}}>
+            <div className="warning-icon" style={isMobile ? { fontSize: '20px' } : {}}>
               <iconify-icon icon="lucide:triangle-alert"></iconify-icon>
             </div>
             <div className="warning-text">
-              <h3 className="warning-title">{budgetAlert.title}</h3>
-              <p className="warning-message">
+              <h3 className="warning-title" style={isMobile ? { fontSize: '14px' } : {}}>{budgetAlert.title}</h3>
+              <p className="warning-message" style={isMobile ? { fontSize: '12px' } : {}}>
                 {budgetAlert.message}
               </p>
             </div>
@@ -227,51 +227,51 @@ const HomeDashboard: React.FC = () => {
 
         {/* Goal Progress */}
         {savingsGoal && (
-          <div className="savings-goal">
+          <div className="savings-goal" style={isMobile ? { padding: '16px', marginBottom: '16px' } : {}}>
             <div className="goal-top">
-              <span className="goal-name">Goal Progress</span>
-              <a href="#" className="view-all-link" onClick={(e) => { e.preventDefault(); handleNavigation('/savings-goals'); }}>
+              <span className="goal-name" style={isMobile ? { fontSize: '14px' } : {}}>Goal Progress</span>
+              <a href="#" className="view-all-link" onClick={(e) => { e.preventDefault(); handleNavigation('/savings-goals'); }} style={isMobile ? { fontSize: '12px' } : {}}>
                 View All
               </a>
             </div>
-            <div className="goal-details">
-              <span>{savingsGoal.goal_name}</span>
-              <span className="progress-percent">{savingsProgress}%</span>
+            <div className="goal-details" style={isMobile ? { marginTop: '10px', marginBottom: '8px' } : {}}>
+              <span style={isMobile ? { fontSize: '13px' } : {}}>{savingsGoal.goal_name}</span>
+              <span className="progress-percent" style={isMobile ? { fontSize: '13px' } : {}}>{savingsProgress}%</span>
             </div>
-            <div className="progress-bar">
+            <div className="progress-bar" style={isMobile ? { height: '8px' } : {}}>
               <div className="progress-bar-fill" style={{ width: `${savingsProgress}%` }}></div>
             </div>
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="quick-actions">
-          <div className="action-button secondary" onClick={() => handleNavigation('/add-expense')}>
-            <iconify-icon icon="lucide:plus"></iconify-icon>
-            <span className="button-label">Expense</span>
+        <div className="quick-actions" style={isMobile ? { gap: '10px', marginBottom: '12px' } : {}}>
+          <div className="action-button secondary" onClick={() => handleNavigation('/add-expense')} style={isMobile ? { padding: '14px 10px' } : {}}>
+            <iconify-icon icon="lucide:plus" style={isMobile ? { fontSize: '20px' } : {}}></iconify-icon>
+            <span className="button-label" style={isMobile ? { fontSize: '12px' } : {}}>Expense</span>
           </div>
-          <div className="action-button secondary" onClick={() => handleNavigation('/set-budget')}>
-            <iconify-icon icon="lucide:banknote" className="budget-icon"></iconify-icon>
-            <span className="button-label">Budget</span>
+          <div className="action-button secondary" onClick={() => handleNavigation('/set-budget')} style={isMobile ? { padding: '14px 10px' } : {}}>
+            <iconify-icon icon="lucide:banknote" className="budget-icon" style={isMobile ? { fontSize: '20px' } : {}}></iconify-icon>
+            <span className="button-label" style={isMobile ? { fontSize: '12px' } : {}}>Budget</span>
           </div>
-          <div className="action-button secondary" onClick={() => handleNavigation('/savings-goals')}>
-            <iconify-icon icon="lucide:target" className="goal-icon"></iconify-icon>
-            <span className="button-label">Goal</span>
+          <div className="action-button secondary" onClick={() => handleNavigation('/savings-goals')} style={isMobile ? { padding: '14px 10px' } : {}}>
+            <iconify-icon icon="lucide:target" className="goal-icon" style={isMobile ? { fontSize: '20px' } : {}}></iconify-icon>
+            <span className="button-label" style={isMobile ? { fontSize: '12px' } : {}}>Goal</span>
           </div>
         </div>
 
-        <div className="quick-actions">
-          <div className="action-button secondary" onClick={() => handleNavigation('/analytics')}>
-            <iconify-icon icon="lucide:bar-chart-3" className="reports-icon"></iconify-icon>
-            <span className="button-label">Reports</span>
+        <div className="quick-actions" style={isMobile ? { gap: '10px', marginBottom: '20px' } : {}}>
+          <div className="action-button secondary" onClick={() => handleNavigation('/analytics')} style={isMobile ? { padding: '14px 10px' } : {}}>
+            <iconify-icon icon="lucide:bar-chart-3" className="reports-icon" style={isMobile ? { fontSize: '20px' } : {}}></iconify-icon>
+            <span className="button-label" style={isMobile ? { fontSize: '12px' } : {}}>Reports</span>
           </div>
-          <div className="action-button secondary" onClick={() => handleNavigation('/spending')}>
-            <iconify-icon  icon="lucide:pie-chart" className="spending-icon"></iconify-icon>
-            <span className="button-label">Spending</span>
+          <div className="action-button secondary" onClick={() => handleNavigation('/spending')} style={isMobile ? { padding: '14px 10px' } : {}}>
+            <iconify-icon  icon="lucide:pie-chart" className="spending-icon" style={isMobile ? { fontSize: '20px' } : {}}></iconify-icon>
+            <span className="button-label" style={isMobile ? { fontSize: '12px' } : {}}>Spending</span>
           </div>
-          <div className="action-button secondary" onClick={() => handleNavigation('/price-comparison')}>
-            <iconify-icon icon="lucide:shopping-cart" className="compare-icon"></iconify-icon>
-            <span className="button-label">Prices</span>
+          <div className="action-button secondary" onClick={() => handleNavigation('/price-comparison')} style={isMobile ? { padding: '14px 10px' } : {}}>
+            <iconify-icon icon="lucide:shopping-cart" className="compare-icon" style={isMobile ? { fontSize: '20px' } : {}}></iconify-icon>
+            <span className="button-label" style={isMobile ? { fontSize: '12px' } : {}}>Prices</span>
           </div>
         </div>
       </main>

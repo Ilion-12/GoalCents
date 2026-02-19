@@ -6,8 +6,6 @@ import { supabase } from '../dataBase/supabase';
 import type { CategoryData, TrendData, Expense, SavingsGoal, Alert } from '../types';
 import '../styles/visualAnalyticsPage.css';
 
-
-
 const VisualAnalyticsPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Overview');
@@ -382,59 +380,61 @@ const calculateMonthsToGoal = () => {
     <div >
       <Header title="Visual Analytics" onBackClick={handleBack} showUserProfile={true} />
 
-      <nav className="tab-navigation" style={isMobile ? { overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' } : {}}>
+      <nav className="tab-navigation" style={isMobile ? { overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none', gap: '8px', padding: '12px 16px' } : {}}>
         {tabs.map((tab) => (
           <div
             key={tab}
             className={`tab-button ${activeTab === tab ? 'active' : ''}`}
             onClick={() => scrollToSection(tab)}
-            style={isMobile ? { fontSize: '14px', padding: '10px 12px', flexShrink: 0 } : {}}
+            style={isMobile ? { fontSize: '13px', padding: '8px 14px', flexShrink: 0, minWidth: 'fit-content' } : {}}
           >
             {tab}
           </div>
         ))}
       </nav>
 
-      <main className="main-content">
+      <main className="main-content" style={isMobile ? { padding: '16px' } : {}}>
         {/* Overview Section */}
-        <div ref={overviewRef} className="section-container">
-          <h2 className="section-title">Overview</h2>
+        <div ref={overviewRef} className="section-container" style={isMobile ? { marginBottom: '12px' } : {}}>
+          <h2 className="section-title" style={isMobile ? { fontSize: '18px' } : {}}>Overview</h2>
         </div>
 
         {/* Spending Section */}
-        <div ref={spendingRef} className="section-container">
-          <h2 className="section-title">Spending Breakdown</h2>
+        <div ref={spendingRef} className="section-container" style={isMobile ? { marginBottom: '12px' } : {}}>
+          <h2 className="section-title" style={isMobile ? { fontSize: '18px' } : {}}>Spending Breakdown</h2>
         </div>
         
         {/* Spending Breakdown */}
-        <div className="insight-card">
-          <div className="card-header">
-            <div className="icon-wrapper">
-              <iconify-icon icon="lucide:pie-chart"></iconify-icon>
+        <div className="insight-card" style={isMobile ? { padding: '16px', marginBottom: '16px' } : {}}>
+          <div className="card-header" style={isMobile ? { marginBottom: '14px' } : {}}>
+            <div className="icon-wrapper" style={isMobile ? { width: '32px', height: '32px' } : {}}>
+              <iconify-icon icon="lucide:pie-chart" style={isMobile ? { fontSize: '16px' } : {}}></iconify-icon>
             </div>
-            <span>Spending Breakdown</span>
+            <span style={isMobile ? { fontSize: '15px', fontWeight: '600' } : {}}>Spending Breakdown</span>
           </div>
 
-          <div className="filter-row">
+          <div className="filter-row" style={isMobile ? { gap: '8px', marginBottom: '16px' } : {}}>
             <div 
               className={`filter-button ${!showEssentialOnly ? 'active' : ''}`}
               onClick={() => setShowEssentialOnly(false)}
+              style={isMobile ? { fontSize: '12px', padding: '8px 14px' } : {}}
             >
               All Expenses
             </div>
             <div 
               className={`filter-button ${showEssentialOnly ? 'active' : ''}`}
               onClick={() => setShowEssentialOnly(true)}
+              style={isMobile ? { fontSize: '12px', padding: '8px 14px' } : {}}
             >
               Essential Only
             </div>
           </div>
 
-          <div className="chart-wrapper">
-            <div className="donut-chart" style={{ background: generateDonutGradient() }}>
+          <div className="chart-wrapper" style={isMobile ? { marginBottom: '16px' } : {}}>
+            <div className="donut-chart" style={{ background: generateDonutGradient(), ...(isMobile ? { width: '180px', height: '180px' } : {}) }}>
               <div className="donut-inner">
-                <div style={{ fontSize: '12px', color: 'var(--muted-foreground)', marginBottom: '4px' }}>Total</div>
-                <div style={{ fontSize: '16px', fontWeight: 'bold', color: 'var(--foreground)' }}>
+                <div style={{ fontSize: isMobile ? '11px' : '12px', color: 'var(--muted-foreground)', marginBottom: '4px' }}>Total</div>
+                <div style={{ fontSize: isMobile ? '15px' : '16px', fontWeight: 'bold', color: 'var(--foreground)' }}>
                   ₱{getTotalSpending().toLocaleString()}
                 </div>
               </div>
@@ -485,12 +485,12 @@ const calculateMonthsToGoal = () => {
         </div>
 
         {/* Trends Section */}
-        <div ref={trendsRef} className="section-container">
-          <h2 className="section-title">Trends</h2>
+        <div ref={trendsRef} className="section-container" style={isMobile ? { marginBottom: '12px' } : {}}>
+          <h2 className="section-title" style={isMobile ? { fontSize: '18px' } : {}}>Trends</h2>
         </div>
 
         {/* Spending Trends */}
-        <div className="insight-card">
+        <div className="insight-card" style={isMobile ? { padding: '16px', marginBottom: '16px' } : {}}>
           <div className="card-header">
             <div className="icon-wrapper">
               <iconify-icon icon="lucide:trending-up"></iconify-icon>
@@ -581,12 +581,12 @@ const calculateMonthsToGoal = () => {
         </div>
 
         {/* Budget Section */}
-        <div ref={budgetRef} className="section-container">
-          <h2 className="section-title">Budget</h2>
+        <div ref={budgetRef} className="section-container" style={isMobile ? { marginBottom: '12px' } : {}}>
+          <h2 className="section-title" style={isMobile ? { fontSize: '18px' } : {}}>Budget</h2>
         </div>
 
         {/* Budget vs Actual */}
-        <div className="insight-card">
+        <div className="insight-card" style={isMobile ? { padding: '16px', marginBottom: '16px' } : {}}>
           <div className="card-header">
             <div className="icon-wrapper">
               <iconify-icon icon="lucide:scale"></iconify-icon>
@@ -631,12 +631,12 @@ const calculateMonthsToGoal = () => {
         </div>
 
         {/* Savings Section */}
-        <div ref={savingsRef} className="section-container">
-          <h2 className="section-title">Savings</h2>
+        <div ref={savingsRef} className="section-container" style={isMobile ? { marginBottom: '12px' } : {}}>
+          <h2 className="section-title" style={isMobile ? { fontSize: '18px' } : {}}>Savings</h2>
         </div>
 
         {/* Savings Goal */}
-        <div className="insight-card">
+        <div className="insight-card" style={isMobile ? { padding: '16px', marginBottom: '16px' } : {}}>
           <div className="card-header">
             <div className="icon-wrapper">
               <iconify-icon icon="lucide:piggy-bank"></iconify-icon>
@@ -680,12 +680,12 @@ const calculateMonthsToGoal = () => {
         </div>
 
         {/* Alerts Section */}
-        <div ref={alertsRef} className="section-container">
-          <h2 className="section-title">Alerts</h2>
+        <div ref={alertsRef} className="section-container" style={isMobile ? { marginBottom: '12px' } : {}}>
+          <h2 className="section-title" style={isMobile ? { fontSize: '18px' } : {}}>Alerts</h2>
         </div>
 
         {/* Alerts */}
-        <div className="insight-card">
+        <div className="insight-card" style={isMobile ? { padding: '16px', marginBottom: '20px' } : {}}>
           <div className="card-header">
             <div className="icon-wrapper">
               <iconify-icon icon="lucide:bell"></iconify-icon>
