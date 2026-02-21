@@ -217,7 +217,7 @@ const VisualAnalyticsPage: React.FC = () => {
 
         setAlerts(newAlerts);
       } else {
-        // No active budget - reset everything
+        // If there is no active budget reset everything
         setCategories([]);
         setBudget({
           total: 0,
