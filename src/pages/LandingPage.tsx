@@ -18,15 +18,23 @@ const LandingPage: React.FC = () => {
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1024 });
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
-  // Check if app is installed and redirect to login
+  // Check if app is installed and redirect appropriately
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
                         (window.navigator as NavigatorStandalone).standalone ||
                         document.referrer.includes('android-app://');
     
     if (isStandalone) {
-      // App is installed, redirect to login
-      navigate('/login', { replace: true });
+      // App is installed, check if user has seen onboarding
+      const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
+      
+      if (hasSeenOnboarding) {
+        // User has seen onboarding, go to login
+        navigate('/login', { replace: true });
+      } else {
+        // First time user, show onboarding
+        navigate('/onboarding', { replace: true });
+      }
     }
   }, [navigate]);
 
