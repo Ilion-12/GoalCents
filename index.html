@@ -29,12 +29,16 @@
         width: 100%;
         height: 100%;
         background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0891b2 100%);
-        display: flex;
+        display: none;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         z-index: 9999;
         transition: opacity 0.5s ease-out;
+      }
+      
+      #splash-screen.show {
+        display: flex;
       }
       
       #splash-screen.fade-out {
@@ -102,19 +106,35 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Hide splash screen when app loads -->
+    <!-- Splash screen logic - only on first launch in PWA mode -->
     <script>
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          const splashScreen = document.getElementById('splash-screen');
-          if (splashScreen) {
-            splashScreen.classList.add('fade-out');
+      // Check if app is in standalone mode (installed as PWA)
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                          window.navigator.standalone || 
+                          document.referrer.includes('android-app://');
+      
+      // Check if this is the first time opening (not a reload)
+      const hasSeenSplash = sessionStorage.getItem('splashShown');
+      
+      // Only show splash on mobile in PWA mode and on first open
+      const shouldShowSplash = isStandalone && !hasSeenSplash;
+      
+      if (shouldShowSplash) {
+        const splashScreen = document.getElementById('splash-screen');
+        if (splashScreen) {
+          splashScreen.classList.add('show');
+          sessionStorage.setItem('splashShown', 'true');
+          
+          window.addEventListener('load', () => {
             setTimeout(() => {
-              splashScreen.style.display = 'none';
-            }, 500);
-          }
-        }, 800);
-      });
+              splashScreen.classList.add('fade-out');
+              setTimeout(() => {
+                splashScreen.style.display = 'none';
+              }, 500);
+            }, 1200);
+          });
+        }
+      }
     </script>
   </body>
 </html>
