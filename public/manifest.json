@@ -12,13 +12,31 @@
       "src": "/IMG/logo2.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/IMG/logo2.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/IMG/logo2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/IMG/logo2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/IMG/logo.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "categories": ["finance", "productivity"],
